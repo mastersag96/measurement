@@ -357,6 +357,16 @@ const QUESTIONS = [
 
 const TAG = ["ก","ข","ค","ง"];
 let cur = 0, score = 0, answered = new Array(QUESTIONS.length).fill(null);
+let order = [];
+
+function shuffleOrder(){
+  order = QUESTIONS.map((_, i) => i);
+  for(let i = order.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+}
+shuffleOrder();
 
 const qnum = document.getElementById('qnum');
 const qtext = document.getElementById('qtext');
@@ -383,7 +393,7 @@ function updateReadout(){
 }
 
 function render(){
-  const item = QUESTIONS[cur];
+  const item = QUESTIONS[order[cur]];
   qnum.textContent = "ข้อ " + (cur+1) + " / " + QUESTIONS.length;
   qtext.textContent = item.q;
   topicTag.textContent = "หมวด " + item.t;
@@ -397,7 +407,7 @@ function render(){
   skipBtn.disabled = false;
   skipBtn.style.display = "inline-block";
 
-  const prevAns = answered[cur];
+  const prevAns = answered[order[cur]];
 
   item.o.forEach((optText, idx)=>{
     const div = document.createElement('div');
@@ -427,9 +437,9 @@ function render(){
 }
 
 function selectOption(idx){
-  const item = QUESTIONS[cur];
-  if(answered[cur] !== null) return;
-  answered[cur] = idx;
+  const item = QUESTIONS[order[cur]];
+  if(answered[order[cur]] !== null) return;
+  answered[order[cur]] = idx;
   if(idx === item.c) score++;
 
   [...optionsEl.children].forEach((div, i)=>{
@@ -446,21 +456,21 @@ function selectOption(idx){
 }
 
 function showFeedback(ok){
-  const item = QUESTIONS[cur];
+  const item = QUESTIONS[order[cur]];
   feedback.className = "feedback show " + (ok ? "ok" : "no");
   feedback.innerHTML = "<b>" + (ok ? "✓ ตอบถูก — เหตุผล" : "✕ ยังไม่ถูก — เหตุผลที่คำตอบ " + TAG[item.c] + " ถูกต้อง") + "</b>" + item.e;
 }
 
 function showSkipFeedback(){
-  const item = QUESTIONS[cur];
+  const item = QUESTIONS[order[cur]];
   feedback.className = "feedback show skip";
   feedback.innerHTML = "<b>» ข้ามข้อนี้ — คำตอบที่ถูกคือ " + TAG[item.c] + "</b>" + item.e;
 }
 
 skipBtn.addEventListener('click', ()=>{
-  if(answered[cur] !== null) return;
-  answered[cur] = 'skip';
-  const item = QUESTIONS[cur];
+  if(answered[order[cur]] !== null) return;
+  answered[order[cur]] = 'skip';
+  const item = QUESTIONS[order[cur]];
   [...optionsEl.children].forEach((div, i)=>{
     div.classList.add('locked');
     if(i === item.c) div.classList.add('correct');
@@ -517,6 +527,7 @@ function showResult(){
 
 document.getElementById('restartBtn').addEventListener('click', ()=>{
   cur = 0; score = 0; answered = new Array(QUESTIONS.length).fill(null);
+  shuffleOrder();
   qpanel.style.display = "flex";
   document.querySelector('.controls').style.display = "flex";
   document.querySelector('.topic-tag').style.display = "block";
