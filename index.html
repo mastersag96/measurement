@@ -3,540 +3,420 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ควิซ: การวัดและเครื่องมือวัดทางไฟฟ้า</title>
+<title>529300 · เครื่องมือวัดไฟฟ้า Quiz Bench</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --body-bg: #1c1f1c;
-    --panel: #f2ede1;
-    --panel-shadow: #d8d0bd;
-    --needle: #c9432b;
-    --amber: #d9a441;
-    --ink: #26281f;
-    --ink-soft: #55584a;
-    --green-led: #6a9c5c;
-    --wrong: #b23a2e;
-    --brass: #b08d4a;
-    --lcd-bg: #14261c;
-    --lcd-fg: #8fe3a3;
-    --lcd-fg-dim: #3f6650;
+    --bg: #0a0f0c;
+    --panel: #10160f;
+    --panel-2: #141c13;
+    --grid-line: rgba(78,222,152,0.08);
+    --phosphor: #4ade80;
+    --phosphor-dim: #2d6e47;
+    --amber: #f5a524;
+    --red: #f56565;
+    --ink: #d7f5df;
+    --ink-dim: #7fa389;
+    --mono: 'IBM Plex Mono', monospace;
+    --thai: 'Noto Sans Thai', 'Noto Sans', sans-serif;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
     background:
-      radial-gradient(circle at 20% -10%, #2a2e28 0%, transparent 55%),
-      radial-gradient(circle at 100% 110%, #23261f 0%, transparent 50%),
-      var(--body-bg);
-    color:var(--panel);
-    font-family:'Sarabun', sans-serif;
+      radial-gradient(1200px 600px at 50% -10%, rgba(78,222,152,0.08), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--thai);
     min-height:100vh;
-    display:flex;
-    justify-content:center;
-    padding:28px 14px 60px;
+    padding:28px 16px 60px;
   }
-  .device{ width:100%; max-width:760px; }
-  .brand-row{
-    display:flex; justify-content:space-between; align-items:baseline;
-    padding:0 6px 10px; color:#8f9285;
-    font-family:'JetBrains Mono', monospace; font-size:11px;
-    letter-spacing:.12em; text-transform:uppercase;
-  }
-  .brand-row b{color:var(--amber); font-weight:700;}
+  .wrap{max-width:760px;margin:0 auto;}
 
-  .casing{
-    background:linear-gradient(180deg,#26291f 0%, #1b1d18 100%);
-    border-radius:18px; padding:20px;
-    box-shadow: 0 30px 60px -20px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.04), 0 0 0 1px #0e0f0c;
+  /* ---- Header: instrument faceplate ---- */
+  .faceplate{
+    background:linear-gradient(180deg, var(--panel-2), var(--panel));
+    border:1px solid rgba(78,222,152,0.18);
+    border-radius:10px;
+    padding:18px 20px;
+    margin-bottom:16px;
+    position:relative;
+    overflow:hidden;
   }
+  .faceplate::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size:16px 16px;
+    pointer-events:none;
+  }
+  .faceplate-top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; position:relative;}
+  .brand{font-family:var(--mono); font-size:11px; letter-spacing:0.14em; color:var(--ink-dim); text-transform:uppercase;}
+  .title{font-family:var(--mono); font-weight:600; font-size:15px; color:var(--phosphor); margin-top:4px; letter-spacing:0.02em;}
+  .subtitle{font-size:12.5px; color:var(--ink-dim); margin-top:4px;}
+  .led{width:8px;height:8px;border-radius:50%;background:var(--phosphor); box-shadow:0 0 8px var(--phosphor); display:inline-block; margin-right:6px; animation:blink 2.4s infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.35;}}
 
-  /* ===== Header / title strip ===== */
-  .title-strip{
-    display:flex; justify-content:space-between; align-items:flex-start;
-    padding:2px 4px 14px;
+  .readout{
+    font-family:var(--mono);
+    background:#050805;
+    border:1px solid rgba(78,222,152,0.25);
+    border-radius:6px;
+    padding:8px 12px;
+    text-align:right;
+    min-width:118px;
   }
-  .title-strip h1{
-    font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:17px;
-    color:var(--panel); margin:0; line-height:1.35;
-  }
-  .title-strip span{
-    display:block; font-size:11px; font-weight:500; color:#8f9285;
-    font-family:'JetBrains Mono',monospace; letter-spacing:.06em; margin-top:3px;
-  }
-  .model-tag{
-    font-family:'JetBrains Mono',monospace; font-size:10px; color:#6e7166;
-    text-align:right; line-height:1.6; white-space:nowrap;
-  }
+  .readout .val{font-size:22px; color:var(--phosphor); text-shadow:0 0 10px rgba(78,222,152,0.5); line-height:1.1;}
+  .readout .lbl{font-size:9.5px; color:var(--ink-dim); letter-spacing:0.12em; text-transform:uppercase;}
 
-  /* ===== LCD digital readout (signature element) ===== */
-  .lcd{
-    background: linear-gradient(180deg,#0f1d15,#101f17);
-    border-radius:8px;
-    padding:14px 18px;
-    box-shadow: inset 0 2px 6px rgba(0,0,0,.55), inset 0 0 0 1px #05100a, 0 1px 0 rgba(255,255,255,.03);
-    display:grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap:10px;
+  /* ---- Nav grid (quiz navigation) ---- */
+  .nav-panel{
+    background:var(--panel);
+    border:1px solid rgba(78,222,152,0.12);
+    border-radius:10px;
+    padding:14px 16px;
+    margin-bottom:16px;
   }
-  .lcd .cell{ text-align:center; }
-  .lcd .cell b{
-    display:block;
-    font-family:'JetBrains Mono', monospace;
-    font-weight:700;
-    font-size:26px;
-    color:var(--lcd-fg);
-    text-shadow: 0 0 6px rgba(143,227,163,.55), 0 0 1px rgba(143,227,163,.9);
-    letter-spacing:.03em;
+  .nav-panel-title{font-family:var(--mono); font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink-dim); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;}
+  .nav-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(34px,1fr)); gap:6px;}
+  .nav-btn{
+    font-family:var(--mono); font-size:12px; font-weight:600;
+    background:#0d130c; color:var(--ink-dim);
+    border:1px solid rgba(127,163,137,0.25);
+    border-radius:5px; padding:7px 0; cursor:pointer;
+    transition:all .12s ease;
   }
-  .lcd .cell small{
-    display:block; margin-top:2px;
-    font-family:'JetBrains Mono', monospace; font-size:9px;
-    color:var(--lcd-fg-dim); letter-spacing:.14em; text-transform:uppercase;
-  }
-  .lcd .cell.mid b{ font-size:20px; }
+  .nav-btn:hover{border-color:var(--phosphor);}
+  .nav-btn.current{outline:2px solid var(--amber); outline-offset:1px;}
+  .nav-btn.answered-correct{background:rgba(78,222,152,0.16); color:var(--phosphor); border-color:var(--phosphor-dim);}
+  .nav-btn.answered-wrong{background:rgba(245,101,101,0.14); color:var(--red); border-color:rgba(245,101,101,0.4);}
+  .nav-btn.skipped{background:rgba(245,165,36,0.12); color:var(--amber); border-color:rgba(245,165,36,0.35);}
 
-  /* ===== Progress rail ===== */
-  .rail{
-    margin:16px 4px 4px; height:6px; background:#0e0f0c; border-radius:4px;
-    overflow:hidden; box-shadow:inset 0 1px 3px rgba(0,0,0,.6);
-  }
-  .rail-fill{
-    height:100%; background:linear-gradient(90deg, var(--brass), var(--amber));
-    width:0%; transition:width .5s ease;
-  }
-  .topic-tag{
-    font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--amber);
-    letter-spacing:.1em; text-transform:uppercase; margin:14px 6px 0;
-  }
-
-  /* ===== Question panel ===== */
-  .qpanel{
-    background:var(--panel); border-radius:10px; margin-top:8px;
-    padding:22px 22px 18px; box-shadow: inset 0 0 0 1px var(--panel-shadow);
-    min-height:300px; display:flex; flex-direction:column;
-  }
-  .qnum{ font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--ink-soft); letter-spacing:.08em; }
-  .qtext{
-    font-family:'Sarabun', sans-serif; font-weight:600; font-size:17px;
-    color:var(--ink); line-height:1.55; margin:8px 0 18px;
-  }
-  .options{ display:flex; flex-direction:column; gap:9px; flex:1; }
-  .opt{
-    display:flex; align-items:flex-start; gap:11px; text-align:left;
-    background:#fff; border:1.5px solid var(--panel-shadow); border-radius:8px;
-    padding:11px 13px; font-family:'Sarabun', sans-serif; font-size:14.5px;
-    color:var(--ink); cursor:pointer; transition: all .15s ease; line-height:1.45;
-  }
-  .opt:hover:not(.locked){ border-color:var(--brass); background:#fffdf7; }
-  .opt .tag{
-    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12px;
-    color:var(--ink-soft); background:#efe9d9; border-radius:5px;
-    padding:2px 7px; flex-shrink:0; margin-top:1px;
-  }
-  .opt.correct{ background:#eaf3e6; border-color:var(--green-led); }
-  .opt.correct .tag{ background:var(--green-led); color:#fff; }
-  .opt.wrong{ background:#f7e9e6; border-color:var(--wrong); }
-  .opt.wrong .tag{ background:var(--wrong); color:#fff; }
-  .opt.dim{ opacity:.55; }
-  .opt.locked{ cursor:default; }
-
-  .feedback{
-    margin-top:14px; font-family:'Sarabun', sans-serif; font-size:13.5px;
-    padding:11px 13px; border-radius:6px; display:none; line-height:1.55;
-  }
-  .feedback.show{display:block;}
-  .feedback.ok{ background:#eaf3e6; color:#3c5f34; border:1px solid #bcd6b2; }
-  .feedback.no{ background:#f7e9e6; color:#7a2c22; border:1px solid #e3bcb4; }
-  .feedback.skip{ background:#efe9d9; color:var(--ink-soft); border:1px solid var(--panel-shadow); }
-  .feedback b{ display:block; font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:.05em; margin-bottom:4px; text-transform:uppercase; }
-
-  .controls{
-    display:flex; justify-content:space-between; align-items:center;
-    gap:10px; margin-top:18px; padding:0 4px;
-  }
+  .toolbar{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;}
   .btn{
-    font-family:'JetBrains Mono', monospace; font-size:12.5px; letter-spacing:.08em;
-    text-transform:uppercase; background:linear-gradient(180deg,#333629,#242620);
-    color:var(--amber); border:1px solid #0e0f0c; border-radius:6px;
-    padding:11px 18px; cursor:pointer; box-shadow:0 2px 0 #0b0c09;
+    font-family:var(--thai); font-size:13px; font-weight:600;
+    padding:9px 14px; border-radius:7px; cursor:pointer; border:1px solid transparent;
+    transition:all .12s ease;
   }
-  .btn:active{ transform:translateY(1px); box-shadow:0 1px 0 #0b0c09; }
-  .btn:disabled{ opacity:.3; cursor:not-allowed; }
-  .btn.next{ background:linear-gradient(180deg,#5f7a51,#3d5233); color:#eef4e8; }
-  .btn.skip{ background:linear-gradient(180deg,#4a4433,#332f22); color:#d9c898; }
+  .btn-ghost{background:transparent; border-color:rgba(127,163,137,0.35); color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--phosphor);}
+  .btn-solid{background:var(--phosphor); color:#052712;}
+  .btn-solid:hover{background:#5aeb90;}
+  .btn-solid:disabled{opacity:0.35; cursor:not-allowed;}
 
-  /* ===== Result screen ===== */
-  .result{ display:none; background:var(--panel); border-radius:10px; margin-top:8px; padding:30px 24px; text-align:center; }
-  .result.show{display:block;}
-  .result h2{ font-family:'Space Grotesk',sans-serif; color:var(--ink); font-size:22px; margin:6px 0 2px; }
-  .result .big{ font-family:'JetBrains Mono',monospace; font-size:52px; font-weight:700; color:var(--needle); margin:10px 0; }
-  .result p{ color:var(--ink-soft); font-size:14px; margin:4px 0 20px;}
-  .breakdown{
-    text-align:left; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--ink);
-    background:#fff; border:1px solid var(--panel-shadow); border-radius:8px;
-    padding:14px 16px; margin-bottom:18px;
+  /* ---- Question card (scope screen) ---- */
+  .screen{
+    background:radial-gradient(circle at 50% 0%, rgba(78,222,152,0.05), transparent 70%), #060a06;
+    border:1px solid rgba(78,222,152,0.22);
+    border-radius:12px;
+    padding:22px 22px 20px;
+    position:relative;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
   }
-  .breakdown div{ display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px dashed #e2dcc9; }
-  .breakdown div:last-child{ border-bottom:none; }
+  .qmeta{font-family:var(--mono); font-size:11px; color:var(--phosphor-dim); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:10px; display:flex; justify-content:space-between;}
+  .qtext{font-size:16.5px; line-height:1.6; color:var(--ink); margin-bottom:18px; font-weight:500;}
+  .options{display:flex; flex-direction:column; gap:9px;}
+  .opt{
+    display:flex; align-items:flex-start; gap:10px;
+    background:var(--panel); border:1px solid rgba(127,163,137,0.25);
+    border-radius:8px; padding:11px 13px; cursor:pointer;
+    font-size:14.5px; line-height:1.5; transition:all .12s ease;
+  }
+  .opt:hover{border-color:var(--phosphor); background:#131c11;}
+  .opt .tag{font-family:var(--mono); font-weight:700; color:var(--ink-dim); min-width:18px;}
+  .opt.selected{border-color:var(--amber); background:rgba(245,165,36,0.08);}
+  .opt.correct{border-color:var(--phosphor); background:rgba(78,222,152,0.12);}
+  .opt.correct .tag{color:var(--phosphor);}
+  .opt.wrong{border-color:var(--red); background:rgba(245,101,101,0.1);}
+  .opt.wrong .tag{color:var(--red);}
+  .opt.disabled{cursor:default;}
+  .opt.disabled:hover{background:var(--panel);}
 
-  footer.tag{
-    text-align:center; color:#6e7166; font-family:'JetBrains Mono', monospace;
-    font-size:10px; letter-spacing:.1em; margin-top:16px; text-transform:uppercase;
-  }
+  .feedback{font-family:var(--mono); font-size:12px; margin-top:12px; min-height:16px;}
+  .feedback.ok{color:var(--phosphor);}
+  .feedback.bad{color:var(--red);}
 
-  @media (max-width:480px){
-    .qtext{font-size:15.5px;}
-    .opt{font-size:13.5px;}
-    .lcd .cell b{font-size:19px;}
-    .lcd .cell.mid b{font-size:15px;}
-    .title-strip h1{font-size:14.5px;}
-  }
+  .footer-nav{display:flex; justify-content:space-between; align-items:center; margin-top:18px; gap:8px;}
+
+  /* ---- Result screen ---- */
+  .result{text-align:center; padding:10px 0 4px;}
+  .result .big{font-family:var(--mono); font-size:48px; color:var(--phosphor); text-shadow:0 0 16px rgba(78,222,152,0.5);}
+  .result .sub{color:var(--ink-dim); font-size:13px; margin-top:4px; margin-bottom:18px;}
+  .review-list{text-align:left; display:flex; flex-direction:column; gap:8px; margin-top:14px;}
+  .review-item{background:var(--panel); border:1px solid rgba(127,163,137,0.2); border-radius:8px; padding:10px 12px; font-size:13px;}
+  .review-item.wrong{border-color:rgba(245,101,101,0.35);}
+  .review-item .q{color:var(--ink); margin-bottom:4px;}
+  .review-item .a{font-family:var(--mono); font-size:12px;}
+  .review-item .a.ok{color:var(--phosphor);}
+  .review-item .a.bad{color:var(--red);}
+
+  .hint{font-size:11.5px; color:var(--ink-dim); text-align:center; margin-top:14px; line-height:1.6;}
+  a.credit{color:var(--ink-dim);}
 </style>
 </head>
 <body>
-<div class="device">
-  <div class="brand-row"><span>EEM&nbsp;•&nbsp;สาขาวิศวกรรมไฟฟ้า</span><b>SUT&nbsp;MULTIQUIZ&nbsp;model&nbsp;EE-01</b></div>
-  <div class="casing">
+<div class="wrap">
 
-    <div class="title-strip">
-      <h1>การวัดและเครื่องมือวัดทางไฟฟ้า<span>100-QUESTION SELF TEST</span></h1>
-      <div class="model-tag">DIGITAL READOUT<br>MODE: LINEAR</div>
+  <div class="faceplate">
+    <div class="faceplate-top">
+      <div>
+        <div class="brand"><span class="led"></span>SUT · 529300 ELECTRICAL INSTRUMENTS &amp; MEASUREMENTS</div>
+        <div class="title">Midterm Review Bench</div>
+        <div class="subtitle">แบบทดสอบทบทวนจากข้อสอบกลางภาคชุดที่ 1 · สุ่มข้อ / ข้ามข้อได้อิสระ</div>
+      </div>
+      <div class="readout">
+        <div class="val" id="scoreReadout">0/0</div>
+        <div class="lbl">score</div>
+      </div>
     </div>
-
-    <div class="lcd">
-      <div class="cell"><b id="roScore">0</b><small>ตอบถูก</small></div>
-      <div class="cell mid"><b id="roIndex">001/100</b><small>ข้อที่</small></div>
-      <div class="cell"><b id="roPct">0%</b><small>ความแม่นยำ</small></div>
-    </div>
-
-    <div class="topic-tag" id="topicTag">หมวด A · นิยามพื้นฐานของการวัด</div>
-    <div class="rail"><div class="rail-fill" id="railFill"></div></div>
-
-    <div class="qpanel" id="qpanel">
-      <div class="qnum" id="qnum">ข้อ 1 / 100</div>
-      <div class="qtext" id="qtext">กำลังโหลด...</div>
-      <div class="options" id="options"></div>
-      <div class="feedback" id="feedback"></div>
-    </div>
-
-    <div class="controls">
-      <button class="btn skip" id="skipBtn">ข้ามข้อนี้ »</button>
-      <button class="btn next" id="nextBtn" disabled>ข้อถัดไป →</button>
-    </div>
-
-    <div class="result" id="result">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-soft);letter-spacing:.1em;">TEST COMPLETE</div>
-      <h2>สรุปผลการทำควิซ</h2>
-      <div class="big" id="finalPct">0%</div>
-      <p id="finalMsg">—</p>
-      <div class="breakdown" id="breakdown"></div>
-      <button class="btn" id="restartBtn">↺ เริ่มทำใหม่</button>
-    </div>
-
   </div>
-  <footer class="tag">การวัดและเครื่องมือวัดทางไฟฟ้า · สรุปจากเอกสารประกอบการเรียน</footer>
+
+  <div class="nav-panel">
+    <div class="nav-panel-title">
+      <span>Quiz Navigation</span>
+      <span id="progressLabel">0 / 0 answered</span>
+    </div>
+    <div class="nav-grid" id="navGrid"></div>
+    <div class="toolbar">
+      <button class="btn btn-ghost" id="shuffleBtn">🔀 สุ่มลำดับข้อใหม่</button>
+      <button class="btn btn-ghost" id="resetBtn">↺ เริ่มทำใหม่ (ลำดับเดิม)</button>
+      <button class="btn btn-solid" id="finishBtn">✓ ส่งคำตอบ / ดูผล</button>
+    </div>
+  </div>
+
+  <div id="quizArea"></div>
+
+  <div class="hint">ข้อมูลคำถามและตัวเลือกทั้งหมดดึงมาจากไฟล์ข้อสอบกลางภาคชุดที่ 1 วิชา 529300 ที่อัปโหลดเท่านั้น</div>
 </div>
 
 <script>
 const QUESTIONS = [
-// ===== หมวด A: นิยามพื้นฐาน (1-15) =====
-{t:"A · นิยามพื้นฐานของการวัด", q:'"การวัด (Measurement)" ตามนิยามในเอกสาร คือข้อใด', o:["การแสดงตัวเลขบนหน้าปัดเครื่องมือวัด","กระบวนการที่ใช้หาค่าปริมาณทางกายภาพที่กำลังถูกวัด โดยเปรียบเทียบกับมาตรฐานของระบบหน่วย","การสอบเทียบเครื่องมือวัด","การคำนวณค่าคาดหวังจากทฤษฎีวงจรไฟฟ้า"], c:1, e:"เอกสารนิยามตรง ๆ ว่า การวัดคือกระบวนการที่นำปริมาณทางกายภาพมาเปรียบเทียบกับมาตรฐานของระบบหน่วยที่ได้รับการยอมรับ"},
-{t:"A · นิยามพื้นฐานของการวัด", q:"ปัญหาที่สำคัญที่สุดในงานวัด คือข้อใด", o:["ราคาของเครื่องมือวัด","ความผิดพลาด (Error)","ขนาดของเครื่องมือวัด","ความเร็วในการอ่านค่า"], c:1, e:"เอกสารระบุไว้ชัดเจนตั้งแต่ต้นว่า \"ปัญหาที่สำคัญในการวัด คือ ความผิดพลาด (error)\""},
-{t:"A · นิยามพื้นฐานของการวัด", q:'"อุปกรณ์วัดหรือเครื่องมือวัด (Instrument)" ทำหน้าที่ใด', o:["หาค่าและแสดงค่าของปริมาณทางกายภาพที่กำลังถูกวัดเท่านั้น","หาค่าและแสดงค่าของปริมาณทางกายภาพที่กำลังถูกวัด","ควบคุมปริมาณทางกายภาพที่กำลังถูกวัด","เก็บรักษามาตรฐานการวัดระดับชาติ"], c:1, e:"นิยามในเอกสาร: อุปกรณ์วัดใช้ในการหาค่า (หาขนาด) และแสดงค่า (แสดงตัวเลข/ค่าที่อ่านได้) ของปริมาณทางกายภาพที่กำลังถูกวัด"},
-{t:"A · นิยามพื้นฐานของการวัด", q:"คุณลักษณะที่บ่งบอกสมรรถนะของเครื่องมือวัด แบ่งออกเป็น 2 กลุ่มหลักคือข้อใด", o:["Analog กับ Digital","Static Characteristics กับ Dynamic Characteristics","Primary กับ Secondary Standard","Gross error กับ Random error"], c:1, e:"เอกสารระบุว่า Performance Characteristics ประกอบด้วยคุณลักษณะสถิต (Static) และคุณลักษณะทางพลวัต (Dynamic)"},
-{t:"A · นิยามพื้นฐานของการวัด", q:'"ความถูกต้องหรือความแม่น (Accuracy)" คือระดับความใกล้เคียงระหว่างค่าใดกับค่าใด', o:["ค่าที่อ่านได้ กับ ค่าเฉลี่ยของชุดข้อมูล","ค่าที่อ่านได้ กับ ค่าคาดหวัง (Expected Value)","ค่าคาดหวัง กับ ค่าแท้จริง","ค่าที่อ่านได้ครั้งที่ 1 กับครั้งที่ 2"], c:1, e:"นิยาม Accuracy ในเอกสาร: ระดับความใกล้เคียง (Closeness) ระหว่างค่าที่อ่านได้และค่าที่คาดหวัง (Expected Value)"},
-{t:"A · นิยามพื้นฐานของการวัด", q:'"ค่าคาดหวัง (Expected Value)" ในทางไฟฟ้ามักได้มาจากวิธีใด', o:["การอ่านค่าจากเครื่องมือวัดซ้ำหลายครั้งแล้วเฉลี่ย","การวิเคราะห์วงจรไฟฟ้าโดยใช้กฎของโอห์ม, KCL, KVL","การสอบถามผู้ผลิตเครื่องมือวัด","การประมาณค่าด้วยสายตา"], c:1, e:"เอกสารระบุว่าค่าคาดหวังในทางไฟฟ้าอาจได้จากการวิเคราะห์วงจรไฟฟ้าโดยใช้กฎของโอห์ม KCL และ KVL"},
-{t:"A · นิยามพื้นฐานของการวัด", q:'"ความเที่ยง (Precision)" หมายถึงอะไร', o:["ความใกล้เคียงระหว่างค่าที่อ่านได้กับค่าคาดหวัง","การวัดหรือประเมินความคงเส้นคงวา/สภาพซ้ำได้ (Repeatability) ของค่าที่อ่านได้","ความสามารถของอุปกรณ์วัดในการตอบสนองต่อสัญญาณขั้นบันได","ค่าความผิดพลาดสูงสุดที่ผู้ผลิตระบุ"], c:1, e:"นิยาม Precision คือการประเมินความคงเส้นคงวาหรือสภาพซ้ำได้ (Repeatability) ของค่าที่อ่านได้เมื่อวัดซ้ำหลายครั้ง"},
-{t:"A · นิยามพื้นฐานของการวัด", q:"ข้อใดถูกต้องเกี่ยวกับความสัมพันธ์ระหว่าง Accuracy กับ Precision", o:["ถ้ามีความเที่ยง จะต้องมีความแม่นเสมอ","ถ้ามีความแม่น จะต้องมีความเที่ยงด้วยเสมอ","Accuracy กับ Precision เป็นสิ่งเดียวกัน","ไม่มีความเกี่ยวข้องกันเลย"], c:1, e:"เอกสารระบุว่า มีความเที่ยงไม่ได้แปลว่ามีความแม่นเสมอไป แต่ถ้ามีความแม่น เครื่องมือนั้นต้องมีความเที่ยงด้วยเสมอ"},
-{t:"A · นิยามพื้นฐานของการวัด", q:'"ความแยกชัดหรือความละเอียด (Resolution)" คือข้อใด', o:["ค่าความผิดพลาดสูงสุดที่ยอมรับได้","การเปลี่ยนแปลงที่น้อยที่สุดของปริมาณทางกายภาพที่ทำให้ค่าที่อ่านได้เปลี่ยนแปลง","ความสามารถในการวัดค่าซ้ำได้เหมือนเดิม","อัตราส่วนระหว่างเอาต์พุตกับอินพุต"], c:1, e:"นิยาม Resolution คือขนาดการเปลี่ยนแปลงที่น้อยที่สุดของปริมาณทางกายภาพที่ทำให้เครื่องมือวัดเปลี่ยนค่าที่อ่านได้"},
-{t:"A · นิยามพื้นฐานของการวัด", q:'"ความไว (Sensitivity)" ของเครื่องมือวัด คำนวณได้จากอะไรบนกราฟระหว่างค่าที่อ่านได้ (แกนตั้ง) กับขนาดปริมาณทางกายภาพ (แกนนอน)', o:["พื้นที่ใต้กราฟ","ความชัน (Slope) ของกราฟ","จุดตัดแกน y","ค่าสูงสุดของกราฟ"], c:1, e:"เอกสารระบุว่าความชัน (Slope) ของกราฟระหว่างเอาต์พุต (ค่าที่อ่านได้) กับอินพุต คือความไวของเครื่องมือวัด"},
-{t:"A · นิยามพื้นฐานของการวัด", q:'"การสอบเทียบเครื่องมือวัด (Calibration)" มีความสำคัญอย่างไร', o:["ใช้ระบุคุณลักษณะทางพลวัตเท่านั้น","ใช้หาคุณลักษณะสถิตของเครื่องมือวัด","ใช้เพิ่มความไวของเครื่องมือวัด","ใช้เปลี่ยนหน่วยการวัด"], c:1, e:"เอกสารระบุว่า การสอบเทียบเครื่องมือวัด (Calibration) จะให้คุณลักษณะสถิตของเครื่องมือวัดนั้น ๆ ได้"},
-{t:"A · นิยามพื้นฐานของการวัด", q:'ข้อใด "ไม่ใช่" คุณลักษณะสถิต (Static Characteristics) ที่กล่าวถึงในเอกสาร', o:["Accuracy","Precision","Rise time","Resolution"], c:2, e:"Rise time เป็นคุณลักษณะของผลตอบสนองแบบพลวัต (Dynamic) ไม่ใช่คุณลักษณะสถิต ส่วน Accuracy, Precision, Resolution ล้วนเป็นคุณลักษณะสถิต"},
-{t:"A · นิยามพื้นฐานของการวัด", q:"ในการวัดแรงดัน ถ้านำ VOM ไปวัด V₂ ที่ขนานกับ R₂ ค่าที่อ่านได้จะคลาดเคลื่อนจากค่าคาดหวัง เนื่องจากสาเหตุใด", o:["VOM มีความละเอียดต่ำเกินไป","VOM มีความต้านทานภายใน (Rm) ไปขนานกับ R₂ ทำให้วงจรเปลี่ยนแปลง","VOM อ่านค่าผิดพลาดแบบสุ่ม","แรงดันแหล่งจ่าย Vs เปลี่ยนแปลง"], c:1, e:"เมื่อนำ VOM (ซึ่งมีค่าความต้านทาน Rm) ไปขนานกับ R₂ จะเกิด Req = R₂//Rm ทำให้วงจรเปลี่ยนไปจากเดิม ค่าที่อ่านได้จึงไม่เท่ากับค่าคาดหวัง"},
-{t:"A · นิยามพื้นฐานของการวัด", q:"ปรากฏการณ์ในข้อก่อนหน้า (VOM ต่อขนานแล้ววงจรเปลี่ยนแปลง) เรียกว่าอะไร", o:["Parallax error","Loading effect","Systematic error","Dynamic error"], c:1, e:"เอกสารเรียกผลกระทบจากการต่อเครื่องมือวัดเข้าไปในวงจรแล้วทำให้วงจรเปลี่ยนแปลงว่า \"ปรากฏการณ์โหลด (Loading effect)\""},
-{t:"A · นิยามพื้นฐานของการวัด", q:"ความแม่นและความเที่ยงในการวัด ขึ้นอยู่กับอะไรบ้าง", o:["คุณภาพของอุปกรณ์การวัดเท่านั้น","ผู้ใช้งานเท่านั้น","คุณภาพของอุปกรณ์การวัด และผู้ใช้งาน","ราคาของเครื่องมือวัดเท่านั้น"], c:2, e:"เอกสารสรุปไว้ท้ายหัวข้อว่า \"ความแม่นและความเที่ยงในการวัด จะขึ้นอยู่กับคุณภาพของอุปกรณ์การวัด และผู้ใช้งานด้วย\""},
-
-// ===== หมวด B: ความผิดพลาดและการคำนวณ (16-35) =====
-{t:"B · ความผิดพลาดและการคำนวณ", q:"สูตรความผิดพลาดสัมบูรณ์ (Absolute Error) คือข้อใด (Yₙ = ค่าคาดหวัง, Xₙ = ค่าที่อ่านได้)", o:["eₙ = Xₙ − Yₙ","eₙ = Yₙ − Xₙ","eₙ = Yₙ × Xₙ","eₙ = Yₙ / Xₙ"], c:1, e:"สูตรตรงในเอกสาร: eₙ = Yₙ − Xₙ (ค่าคาดหวัง ลบ ค่าที่อ่านได้)"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:"สูตรเปอร์เซ็นต์ความผิดพลาด (%error) คือข้อใด", o:["%error = (eₙ/Xₙ) × 100","%error = (eₙ/Yₙ) × 100","%error = eₙ × 100","%error = (Yₙ × Xₙ)/100"], c:1, e:"สูตรในเอกสาร: %error = (eₙ/Yₙ) × 100 หรือเขียนเป็น (Yₙ−Xₙ)/Yₙ × 100"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:"บางครั้งเราเรียก %error ว่าอะไร", o:["%Precision","%Sensitivity","%Accuracy","%Resolution"], c:2, e:"เอกสารระบุว่า \"บางครั้งเราจะเรียก %error ว่า %accuracy\""},
-{t:"B · ความผิดพลาดและการคำนวณ", q:"ความแม่นสัมพัทธ์ (Relative Accuracy, Aₙ) คำนวณจากสูตรใด", o:["Aₙ = 1 − |Yₙ − Xₙ|/Yₙ","Aₙ = |Yₙ − Xₙ|/Yₙ","Aₙ = Yₙ/Xₙ","Aₙ = 1 + |Yₙ − Xₙ|/Yₙ"], c:0, e:"สูตร Relative accuracy ในเอกสาร: Aₙ = 1 − |Yₙ − Xₙ|/Yₙ"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:"ความเที่ยงของค่าที่อ่านได้ครั้งที่ n (Pₙ) คำนวณจากสูตรใด (X̄ = ค่าเฉลี่ย)", o:["Pₙ = 1 − |Xₙ − X̄|/X̄","Pₙ = 1 − |Xₙ − X̄|","Pₙ = |Xₙ − X̄|/X̄","Pₙ = Xₙ/X̄"], c:0, e:"สูตรความเที่ยงในเอกสาร: Pₙ = 1 − |Xₙ − X̄|/X̄ มีรูปแบบคล้าย Relative accuracy แต่เทียบกับค่าเฉลี่ยแทนค่าคาดหวัง"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:"ความผิดพลาดสถิต (Static error) แบ่งออกเป็นกี่ประเภทหลัก", o:["2 ประเภท","3 ประเภท","4 ประเภท","5 ประเภท"], c:1, e:"เอกสารแบ่ง Static error เป็น 3 ประเภท: Gross error, Systematic error, และ Random error"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:'"Gross error" หรือ Human error เกิดจากสาเหตุใดเป็นหลัก', o:["ข้อบกพร่องเชิงกลของเครื่องมือวัด","การกระทำผิดพลาด (Mistake) ของผู้ใช้งาน เช่น อ่านตัวเลขผิด บันทึกค่าผิด","ปัจจัยแวดล้อม เช่น อุณหภูมิ ความชื้น","สาเหตุเล็ก ๆ น้อย ๆ ที่ไม่ทราบสาเหตุแน่นอน"], c:1, e:"เอกสารนิยาม Gross error ว่าเกิดจากการทำผิดพลาด (Mistake) ของผู้ใช้งาน เช่น อ่านตัวเลขผิด ใช้งานอุปกรณ์ไม่ถูกต้อง หรือบันทึกค่าผิด"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:'เราสามารถ "กำจัด" Gross error ให้หมดไปได้หรือไม่', o:["กำจัดได้หมด 100% ด้วยการสอบเทียบ","กำจัดไม่ได้เลย แต่ทำให้เหลือน้อยที่สุดได้","กำจัดได้เฉพาะเมื่อใช้เครื่องมือดิจิทัล","ไม่เกี่ยวข้องกับการกำจัด เพราะเกิดขึ้นเองตามธรรมชาติ"], c:1, e:"เอกสารระบุชัดว่า \"เราไม่สามารถกำจัด Gross error ให้หมดไปได้ แต่เราสามารถทำให้ Gross error เหลือน้อยที่สุดได้\""},
-{t:"B · ความผิดพลาดและการคำนวณ", q:"ความผิดพลาดเชิงระบบ (Systematic error) มีอีกชื่อเรียกว่าอะไร", o:["Random error","ไบแอส (Bias)","Parallax error","Loading effect"], c:1, e:"เอกสารระบุว่า \"บางครั้งเราจะเรียกความผิดพลาดนี้ว่า ไบแอส (Bias)\""},
-{t:"B · ความผิดพลาดและการคำนวณ", q:"ความผิดพลาดเชิงระบบ (Systematic error) ประกอบด้วยกี่ชนิดย่อย อะไรบ้าง", o:["2 ชนิด คือ Gross error และ Random error","3 ชนิด คือ Instrumental error, Environmental error, Observational error","2 ชนิด คือ Instrumental error และ Random error","1 ชนิด คือ Instrumental error เท่านั้น"], c:1, e:"เอกสารแบ่ง Systematic error เป็น 3 ชนิดย่อย: Instrumental error, Environmental error, และ Observational error"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:'"Instrumental error" เกิดจากสาเหตุใด', o:["ผู้ใช้งานอ่านตัวเลขผิด","อุณหภูมิและความชื้นภายนอก","โครงสร้างเชิงกลและส่วนประกอบที่มีตำหนิ เช่น แรงเสียดทาน สปริงไม่สม่ำเสมอ","มุมมองของผู้อ่านค่าที่ไม่ตรงกับสเกล"], c:2, e:"เอกสารระบุว่า Instrumental error เกิดจากโครงสร้างเชิงกลและส่วนประกอบที่มีตำหนิ เช่น แรงเสียดทานในส่วนที่หมุนได้ หรือสปริงยืดหยุ่นไม่สม่ำเสมอ"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:'วิธีลด Instrumental error ข้อใด "ไม่ถูกต้อง"', o:["เลือกอุปกรณ์วัดที่เหมาะสมกับงาน","ใช้ตัวประกอบค่าแก้ (Correction Factors)","สอบเทียบอุปกรณ์วัดตามระยะเวลาที่กำหนด","เพิ่มแรงดันไฟเลี้ยงให้เครื่องมือวัดสูงขึ้น"], c:3, e:"เอกสารระบุวิธีลด Instrumental error ไว้ 3 ข้อ คือ เลือกอุปกรณ์ให้เหมาะสม, ใช้ตัวประกอบค่าแก้, และสอบเทียบตามกำหนด — ไม่มีข้อใดกล่าวถึงการเพิ่มแรงดันไฟเลี้ยง"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:'"Environmental error" เกิดจากปัจจัยใด', o:["สภาพแวดล้อมภายนอก เช่น อุณหภูมิ ความชื้น สนามแม่เหล็ก แสงสว่าง","การอ่านค่าผิดตำแหน่งเข็มชี้","ความผิดพลาดในการบันทึกผล","โครงสร้างเชิงกลของเครื่องมือวัด"], c:0, e:"เอกสารระบุว่า Environmental error เกิดจากสภาพแวดล้อมภายนอกของอุปกรณ์วัด เช่น อุณหภูมิ ความชื้น ความดัน การสั่นสะเทือน สนามแม่เหล็ก/ไฟฟ้า แสงสว่าง"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:'วิธีลด Environmental error ข้อใด "ไม่ถูกต้อง"', o:["ปรับสภาพอากาศ (อุณหภูมิและความชื้นสัมพัทธ์)","การปิดผนึก (Seal) ส่วนประกอบที่อ่อนไหวต่อปัจจัยแวดล้อม","การกำบังสนามแม่เหล็ก (Magnetic shield)","เพิ่มความละเอียด (Resolution) ของสเกล"], c:3, e:"เอกสารระบุวิธีลด Environmental error ไว้ 3 ข้อ คือ ปรับสภาพอากาศ, ปิดผนึกส่วนประกอบที่อ่อนไหว, และกำบังสนามแม่เหล็ก — ไม่เกี่ยวกับ Resolution"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:'"Parallax error" เป็นตัวอย่างของความผิดพลาดประเภทใด', o:["Gross error","Observational error","Random error","Instrumental error"], c:1, e:"เอกสารระบุว่า Parallax error เป็นตัวอย่างหนึ่งของ Observation error"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:"สาเหตุของ Parallax error คือข้อใด", o:["ผู้ใช้งานไม่ได้มอง VOM ตรง ๆ ทำให้เข็มชี้ไม่ทับเงาของตัวมันบนกระจกโค้ง","เข็มชี้เครื่องมือวัดเสียหาย","อุณหภูมิสูงเกินไป","สปริงยืดหยุ่นไม่สม่ำเสมอ"], c:0, e:"เอกสารอธิบายว่า Parallax error เกิดจากผู้ใช้งานไม่ได้มอง VOM ตรง ๆ ทำให้เข็มชี้ไม่ทับเงาของตัวมันบนกระจกโค้งบนสเกล จึงอ่านค่าผิดตำแหน่ง"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:"การอ่านตัวเลขจากสเกลอื่นที่ไม่ใช่สเกลที่ใช้งานจริงใน VOM จัดเป็นความผิดพลาดประเภทใด", o:["Observational error","Gross error","Systematic error","Random error"], c:1, e:"เอกสารระบุชัดว่า การอ่านตัวเลขจากสเกลอื่นที่ไม่ใช่สเกลที่ใช้งานจริงไม่ใช่ Observational error แต่จัดเป็น Gross error"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:'"Random error" มีลักษณะอย่างไร', o:["ทราบสาเหตุแน่นอนและกำจัดได้หมด","ไม่ทราบสาเหตุแน่นอน เกิดจากสาเหตุเล็ก ๆ น้อย ๆ หลายอย่างรวมกัน และกำจัดไม่ได้","เกิดจากผู้ใช้งานอ่านค่าผิดเพียงอย่างเดียว","เกิดเฉพาะกับเครื่องมือวัดคุณภาพต่ำเท่านั้น"], c:1, e:"เอกสารระบุว่า Random error ไม่ทราบสาเหตุแน่นอน เกิดจากสาเหตุเล็ก ๆ น้อย ๆ หลายอย่างรวมกัน มีอยู่ในตัวอุปกรณ์วัดโดยธรรมชาติและกำจัดไม่ได้"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:"ข้อใดคือตัวอย่างที่ใช้สังเกตเห็น Random error ได้ตามเอกสาร", o:["การวัดค่าความต้านทานด้วย DMM ครั้งเดียว","การวัดแรงดันตกคร่อมอุปกรณ์ไฟฟ้าด้วย Volt meter เป็นเวลานาน แล้วพบค่าที่อ่านได้เปลี่ยนแปลงเล็กน้อยทั้งที่แรงดันคงที่","การอ่านค่าจากสเกลผิดตำแหน่ง","การต่อวงจรผิด"], c:1, e:"เอกสารยกตัวอย่าง Random error จากการวัดแรงดันตกคร่อมอุปกรณ์ไฟฟ้าเป็นเวลานาน (แรงดันคงที่) แล้วค่าที่อ่านได้เปลี่ยนแปลงไปเล็กน้อยจากเดิม"},
-{t:"B · ความผิดพลาดและการคำนวณ", q:"ตัวอย่างที่ 2 ในเอกสาร: มาตรวัดแรงดันมีความไว 1 kΩ/V ใช้พิสัย 0–150 V ค่าความต้านทานของมาตรวัดแรงดัน (Rv) เท่ากับเท่าใด", o:["1 kΩ","8 kΩ","150 kΩ","45.8 kΩ"], c:2, e:"Rv = ความไว × พิสัย = 1 kΩ/V × 150 V = 150 kΩ ตามที่คำนวณไว้ในเอกสาร"},
-
-// ===== หมวด C: Loading Effect (36-45) =====
-{t:"C · Loading Effect", q:'"Loading effect" เกิดขึ้นเมื่อใด', o:["เมื่อเครื่องมือวัดใช้แบตเตอรี่หมด","เมื่อการต่อเครื่องมือวัดเข้าไปในวงจรทำให้วงจรเปลี่ยนแปลงไปจากเดิม ส่งผลต่อค่าที่วัดได้","เมื่อเครื่องมือวัดถูกใช้งานเกินพิสัย","เมื่อผู้ใช้งานอ่านค่าผิดตำแหน่ง"], c:1, e:"เอกสารนิยาม Loading effect ว่าเป็นผลกระทบจากการต่อเครื่องมือวัดเข้าไปในวงจรแล้วทำให้วงจรเปลี่ยนแปลง (เช่นมี Rm เพิ่มเข้ามา) และส่งผลต่อค่าที่วัดได้"},
-{t:"C · Loading Effect", q:"ในตัวอย่างที่ 2 ค่าความต้านทานปรากฏ (Apparent resistance, R_T) คำนวณจาก 80V/10mA ได้เท่าใด", o:["4 kΩ","8 kΩ","80 kΩ","800 Ω"], c:1, e:"R_T = V/A = 80V/10mA = 8 kΩ ตรงตามการคำนวณในเอกสาร"},
-{t:"C · Loading Effect", q:"ค่าความต้านทานจริง (Actual resistance, R_X) ในตัวอย่างที่ 2 มีค่าประมาณเท่าใด", o:["8 kΩ","80 kΩ","8.45 kΩ","150 kΩ"], c:2, e:"จากสูตร R_X = (R_T·R_V)/(R_V−R_T) = (8k)(150k)/(150k−8k) ≈ 8.45 kΩ ตามที่เอกสารคำนวณไว้"},
-{t:"C · Loading Effect", q:"เปอร์เซ็นต์ความผิดพลาดที่เกิดจาก Loading effect ในตัวอย่างที่ 2 มีค่าประมาณเท่าใด", o:["0.53%","5.3%","53%","15%"], c:1, e:"%error = (8.45k−8k)/8.45k × 100% ≈ 5.3% ตามที่คำนวณไว้ในเอกสาร"},
-{t:"C · Loading Effect", q:"ถ้าต้องการให้ %error จาก Loading effect มีค่าน้อย ๆ มาตรวัดแรงดัน (Voltmeter) ควรมีคุณสมบัติใด", o:["ค่าความต้านทาน (Rv) สูงมาก ๆ","ค่าความต้านทาน (Rv) ต่ำมาก ๆ","ความไว (Sensitivity) ต่ำ","พิสัยการวัดกว้างที่สุดเท่านั้น"], c:0, e:"เอกสารสรุปว่า มาตรวัดแรงดันที่มีคุณภาพดีต้องมีค่าความต้านทาน (Rv) สูงมาก ๆ เพื่อให้ RX << RV และลด %error จาก Loading effect"},
-{t:"C · Loading Effect", q:"ถ้า Rv >> R_T (ค่าความต้านทานมาตรวัดแรงดันสูงกว่าค่าที่อ่านได้มาก ๆ) จะได้ว่า R_X มีค่าเข้าใกล้อะไร", o:["R_V","R_T","0","∞"], c:1, e:"เอกสารแสดงว่าเมื่อ Rv >> R_T แล้ว R_T/Rv → 0 ทำให้ R_X ≈ R_T/(1−0) = R_T นั่นคือ R_X เข้าใกล้ R_T"},
-{t:"C · Loading Effect", q:"มาตรวัดกระแสไฟฟ้า (Ammeter) ที่มีคุณภาพดี ควรมีค่าความต้านทานภายในอย่างไร", o:["สูงมาก ๆ","ต่ำมาก ๆ","เท่ากับค่าความต้านทานของโหลดพอดี","ไม่มีผลต่อคุณภาพ"], c:1, e:"เอกสารสรุปไว้ตรงกันข้ามกับ Voltmeter: มาตรวัดกระแสไฟฟ้าที่มีคุณภาพดี ต้องมีค่าความต้านทานน้อยมาก ๆ (ต่ำมาก ๆ)"},
-{t:"C · Loading Effect", q:"เหตุใดการนำ VOM ไปวัดกระแสไฟฟ้าต้องต่อแบบอนุกรมกับอุปกรณ์ไฟฟ้า", o:["เพื่อให้ VOM กลายเป็นส่วนหนึ่งของวงจรและวัดกระแสที่ไหลผ่าน","เพื่อป้องกันไฟฟ้าลัดวงจร","เพื่อลด Loading effect ให้เป็นศูนย์","เพื่อเพิ่มความไวของเครื่องมือวัด"], c:0, e:"เอกสารอธิบายว่าการวัดกระแสไฟฟ้าต้องต่อ VOM อนุกรมกับอุปกรณ์ไฟฟ้าที่ต้องการวัดกระแสที่ไหลผ่าน ทำให้ VOM กลายเป็นส่วนหนึ่งของวงจร"},
-{t:"C · Loading Effect", q:"การนำ VOM ไปวัดแรงดันต้องต่ออย่างไรกับอุปกรณ์ไฟฟ้าที่ต้องการวัด", o:["อนุกรม","ขนาน (คร่อม)","ต่อผ่านหม้อแปลง","ไม่ต้องต่อ ใช้การเหนี่ยวนำ"], c:1, e:"เอกสารระบุว่าการวัดแรงดันต้องนำ VOM หรือ DMM ต่อคร่อม (ขนาน) กับอุปกรณ์ไฟฟ้าที่ต้องการวัดแรงดัน"},
-{t:"C · Loading Effect", q:"สมมุติว่ามาตรวัดแรงดันมีค่าความต้านทาน R_V และตัวต้านทานไม่ทราบค่า R_X ต่อขนานกัน สูตรของ R_eq (ความต้านทานสมมูล) คือข้อใด", o:["R_eq = R_V + R_X","R_eq = R_V // R_X = (R_V·R_X)/(R_V+R_X)","R_eq = R_V − R_X","R_eq = R_V/R_X"], c:1, e:"สูตรความต้านทานขนานมาตรฐาน: R_eq = R_V // R_X = (R_V·R_X)/(R_V+R_X) ตามที่ปรากฏในตัวอย่างที่ 1 ของเอกสาร"},
-
-// ===== หมวด D: การวิเคราะห์ทางสถิติ (46-65) =====
-{t:"D · การวิเคราะห์ทางสถิติ", q:"เป้าหมายของการวิเคราะห์สถิติของค่าที่อ่านได้คืออะไร", o:["ลดความผิดพลาดเชิงระบบ (fixed bias) ของเครื่องมือวัด","วิเคราะห์ความไม่แน่นอน (Uncertainty) ของผลการทดลอง","เพิ่มความไวของเครื่องมือวัด","กำจัด Gross error"], c:1, e:"เอกสารเปิดหัวข้อว่า การวิเคราะห์สถิติของค่าที่อ่านได้ช่วยให้สามารถวิเคราะห์ความไม่แน่นอน (Uncertainty) ของผลลัพธ์/ผลการทดลองได้"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:'ข้อใดคือ "ข้อควรจำ" สำคัญเกี่ยวกับการวิเคราะห์ทางสถิติตามเอกสาร', o:["การวิเคราะห์ทางสถิติลดทอนความผิดพลาดจาก fixed bias ได้","การวิเคราะห์ทางสถิติไม่ได้ลดทอนความผิดพลาดที่เกิดจาก fixed bias ของเครื่องมือวัด","การวิเคราะห์ทางสถิติใช้ได้เฉพาะกับข้อมูลที่มีจำนวนมากกว่า 1000 ค่า","การวิเคราะห์ทางสถิติทดแทนการสอบเทียบได้"], c:1, e:'เอกสารเขียนตรงตัวว่า "ข้อควรจำ คือ การวิเคราะห์ทางสถิติไม่ได้ลดทอนความผิดพลาดที่เกิดจาก fixed bias ของอุปกรณ์วัดหรือเครื่องมือวัด"'},
-{t:"D · การวิเคราะห์ทางสถิติ", q:"สูตรค่าเฉลี่ยเลขคณิต (Arithmetic mean) คือข้อใด", o:["x̄ = (x₁+x₂+...+xₙ)/n","x̄ = (x₁×x₂×...×xₙ)","x̄ = max(x₁,...,xₙ)","x̄ = (x₁+x₂+...+xₙ) × n"], c:0, e:"สูตรค่าเฉลี่ยเลขคณิตมาตรฐาน: x̄ = (x₁+x₂+...+xₙ)/n"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:'"การเบี่ยงเบนจากค่าเฉลี่ย (Deviation, d)" ของค่าที่อ่านได้ x₁ คำนวณจากสูตรใด', o:["d₁ = x₁ + x̄","d₁ = x₁ − x̄","d₁ = x̄ − x₁²","d₁ = x₁ / x̄"], c:1, e:"สูตรในเอกสาร: d₁ = x₁ − x̄ คือความแตกต่างระหว่างค่าที่อ่านได้กับค่าเฉลี่ยเลขคณิต"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:"ผลรวมของค่าการเบี่ยงเบนทั้งหมด (d₁+d₂+...+dₙ) มีค่าเท่ากับเท่าใดเสมอ", o:["เท่ากับค่าเฉลี่ย","เท่ากับ 0","เท่ากับ n","เท่ากับผลรวมของ x ทั้งหมด"], c:1, e:"เอกสารระบุว่า d₁+d₂+...+dₙ = 0 เสมอ แม้ค่าการเบี่ยงเบนแต่ละตัวจะมีทั้งบวกและลบ"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:'"การเบี่ยงเบนเฉลี่ย (Average deviation, D_av)" บ่งบอกถึงคุณสมบัติใดของเครื่องมือวัด', o:["Accuracy","Precision","Sensitivity","Resolution"], c:1, e:"เอกสารระบุว่า Average deviation คือการชี้บอกความเที่ยง (Precision) ของอุปกรณ์วัดหรือเครื่องมือวัด"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:"สูตรการเบี่ยงเบนเฉลี่ย D_av คือข้อใด", o:["D_av = (d₁+d₂+...+dₙ)/n","D_av = (|d₁|+|d₂|+...+|dₙ|)/n","D_av = (d₁²+d₂²+...+dₙ²)/n","D_av = √(d₁²+d₂²+...+dₙ²)"], c:1, e:"สูตรในเอกสาร: D_av = (|d₁|+|d₂|+...+|dₙ|)/n คือค่าสัมบูรณ์ของการเบี่ยงเบนหารด้วยจำนวนข้อมูล"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:"เครื่องมือวัดที่มีความเที่ยงสูงจะมีค่าการเบี่ยงเบนเฉลี่ยเป็นอย่างไร", o:["สูงมาก","ต่ำมาก","เท่ากับศูนย์เสมอ","ไม่มีความสัมพันธ์กัน"], c:1, e:'เอกสารระบุว่า "อุปกรณ์วัดหรือเครื่องมือวัดที่มีความเที่ยงสูงจะมีการเบี่ยงเบนเฉลี่ยต่ำมาก"'},
-{t:"D · การวิเคราะห์ทางสถิติ", q:"สูตรการเบี่ยงเบนมาตรฐาน (Standard deviation, σ) เมื่อ n > 30 คือข้อใด", o:["σ = (d₁²+d₂²+...+dₙ²)/n","σ = √[(d₁²+d₂²+...+dₙ²)/n]","σ = √[(d₁²+d₂²+...+dₙ²)/(n−1)]","σ = (d₁+d₂+...+dₙ)/n"], c:1, e:"เมื่อ n > 30 เอกสารให้สูตร σ = √[(d₁²+d₂²+...+dₙ²)/n]"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:"เมื่อ n ≤ 30 ตัวหารในสูตรการเบี่ยงเบนมาตรฐานเปลี่ยนจาก n เป็นอะไร", o:["n+1","n−1","2n","n/2"], c:1, e:"เอกสารระบุว่าเมื่อ n ≤ 30 สูตรเปลี่ยนตัวหารเป็น (n−1) แทน n"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:'"Least mean square linear graph fitting" ใช้เพื่อวัตถุประสงค์ใด', o:["หาค่าเฉลี่ยของข้อมูล","หาสมการเส้นตรงที่ดีที่สุด/เหมาะสมที่สุดสำหรับข้อมูลที่มีลักษณะเป็นเส้นตรง","หาค่าการเบี่ยงเบนมาตรฐาน","หาค่าความไวของเครื่องมือวัด"], c:1, e:"เอกสารนิยามว่า Least mean square linear graph fitting คือการหากราฟเส้นตรงที่ดีที่สุด/เหมาะสมที่สุดสำหรับใช้แทนความสัมพันธ์ระหว่างตัวแปร x และ y"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:"ในสมการเส้นตรง y = mx + b ตัวแปร m คืออะไร", o:["ค่าคงที่หรือส่วนตัดแกน y","ความชัน (Slope) ของกราฟเส้นตรงที่ดีที่สุด","ค่าความผิดพลาด","จำนวนข้อมูล"], c:1, e:"เอกสารระบุว่า m คือความชัน (Slope) ของกราฟเส้นตรงที่ดีที่สุด ส่วน b คือค่าคงที่หรือส่วนตัดแกน y"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:"ค่า m และ b ที่ทำให้ ε (ผลรวมกำลังสองของความผิดพลาด) น้อยที่สุด เกิดขึ้นเมื่อเงื่อนไขใด", o:["∂ε/∂m = 0 และ ∂ε/∂b = 0 พร้อมกัน","m = b","ε = 0 เท่านั้น","m และ b มีค่าเท่ากับค่าเฉลี่ยของ x และ y"], c:0, e:"เอกสารระบุว่าค่า m และ b ที่ทำให้ ε น้อยที่สุด เกิดขึ้นเมื่อ ∂ε/∂m = 0 และ ∂ε/∂b = 0 พร้อมกัน (เงื่อนไข Least squares)"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:"สูตรหาค่า m ด้วยกฎของคราเมอร์ (Cramer's rule) มีตัวแปรจากผลรวมใดบ้าง", o:["Σxₖ, Σyₖ, Σ(xₖyₖ), Σ(xₖ²) และ n","เฉพาะ Σxₖ และ Σyₖ","เฉพาะค่าเฉลี่ยของ x และ y","เฉพาะจำนวนข้อมูล n"], c:0, e:"สูตร m จากกฎของคราเมอร์ในเอกสารประกอบด้วยผลรวม Σxₖ, Σyₖ, Σ(xₖyₖ), Σ(xₖ²) และจำนวนข้อมูล n ทั้งหมด"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:'"ความเที่ยง (Precision, Pₙ)" ตามสูตร Pₙ = 1 − |Xₙ − X̄|/X̄ ต้องใช้เงื่อนไขใดในการวัด', o:["วัดด้วยเครื่องมือต่างชนิดกัน","นำอุปกรณ์วัดตัวเดียวกันวัดปริมาณทางกายภาพที่มีขนาดคงที่ซ้ำกันหลายครั้ง","วัดเพียงครั้งเดียวก็เพียงพอ","ต้องใช้ผู้วัดหลายคน"], c:1, e:"เอกสารระบุว่าค่าที่อ่านได้ที่นำมาคำนวณความเที่ยงต้องเกิดจากการนำอุปกรณ์วัดตัวเดียวกัน วัดปริมาณทางกายภาพขนาดคงที่ซ้ำกันหลายครั้ง"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:"จากตารางค่าที่อ่านได้ x₁..x₆ = 9.8, 9.9, 10, 10.1, 10.2, 10.3 (หน่วยโวลต์) ค่าเฉลี่ยเลขคณิตมีค่าเท่าใด", o:["9.9 V","10.0 V","10.05 V","10.1 V"], c:1, e:"ผลรวม = 9.8+9.9+10+10.1+10.2+10.3 = 60.3 หารด้วย 6 = 10.05 ≈ 10.0 V ตามที่โน้ตในเอกสารระบุ (ค่าประมาณ 10V)"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:"ในโจทย์ข้อก่อนหน้า ถ้าค่าคาดหวัง (Yₙ) คือ 10 V การเบี่ยงเบนของค่าที่อ่านได้ x₁ = 9.8 จากค่าเฉลี่ยเท่ากับเท่าใด (โดยประมาณ)", o:["−0.25","+0.25","0","−0.5"], c:0, e:"d₁ = x₁ − x̄ = 9.8 − 10.05 ≈ −0.25 ตามสูตรการเบี่ยงเบนจากค่าเฉลี่ย"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:"ฮิสโตแกรม (Histogram) ที่ได้จากการพล็อตค่าที่อ่านได้กับจำนวนครั้งของค่าที่อ่านได้ เมื่อวัดจำนวนครั้งมากขึ้นเรื่อย ๆ จะมีแนวโน้มเป็นอย่างไร", o:["กลายเป็นเส้นตรง","มีความสมมาตร (Symmetry) รอบค่ากลางมากขึ้น จนเป็นกราฟรูประฆังคว่ำ (Gaussian curve)","กระจายแบบสุ่มไม่มีรูปแบบ","กลายเป็นกราฟเอกซ์โปเนนเชียล"], c:1, e:"เอกสารอธิบายว่ายิ่งวัดจำนวนครั้งมากขึ้นและพิจารณาความละเอียดมากขึ้น ฮิสโตแกรมจะมีความสมมาตรรอบค่ากลางมากขึ้น จนเป็นเส้นโค้ง Gaussian รูประฆังคว่ำ"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:'"ค่าแท้จริงของปริมาณทางกายภาพที่กำลังถูกวัด" ตามสมมุติฐาน Gaussian law คือค่าใด', o:["ค่าที่อ่านได้ครั้งแรก","ค่ากลาง (Central value) หรือค่าที่อ่านได้เฉลี่ย (Mean reading)","ค่าสูงสุดของข้อมูล","ค่าต่ำสุดของข้อมูล"], c:1, e:"เอกสารสรุปว่า ค่าแท้จริงของปริมาณทางกายภาพที่กำลังถูกวัดคือค่ากลาง (Central value) หรือค่าที่อ่านได้เฉลี่ย (Mean reading)"},
-{t:"D · การวิเคราะห์ทางสถิติ", q:'ข้อใด "ไม่ใช่" สมมุติฐานของ Gaussian law (Normal law) ของความผิดพลาดสุ่ม', o:["ข้อมูลค่าที่อ่านได้ทุกตัวเลขมีความผิดพลาดสุ่มที่เกิดจากการรบกวนเล็ก ๆ น้อย ๆ","ความผิดพลาดสุ่มมีทั้งค่าบวกและค่าลบ","ความผิดพลาดสุ่มบวกและลบมีโอกาสเกิดขึ้นได้เท่า ๆ กัน","ความผิดพลาดค่ามาก ๆ มีโอกาสเกิดขึ้นได้มากกว่าความผิดพลาดค่าน้อย ๆ"], c:3, e:"เอกสารระบุตรงข้ามกับข้อนี้ คือ ความผิดพลาดค่าน้อย ๆ มีโอกาสเกิดขึ้นได้มากกว่าค่ามาก ๆ และแทบไม่มีความผิดพลาดค่ามาก ๆ เกิดขึ้นเลย"},
-
-// ===== หมวด E: ความน่าจะเป็นของความผิดพลาด / Gaussian (66-75) =====
-{t:"E · Gaussian Distribution", q:"สมมุติฐานของการเขียนเส้นโค้งการแจกแจงความผิดพลาด (Error distribution curve) กล่าวว่าอย่างไร", o:["ความผิดพลาดค่าน้อย ๆ มีโอกาสเกิดขึ้นได้มากกว่าความผิดพลาดค่ามาก ๆ และแทบไม่มีความผิดพลาดค่ามาก ๆ เกิดขึ้น","ความผิดพลาดทุกขนาดมีโอกาสเกิดขึ้นเท่ากันหมด","ความผิดพลาดค่ามาก ๆ เกิดขึ้นบ่อยกว่าค่าน้อย","ไม่มีรูปแบบที่แน่นอน"], c:0, e:"เอกสารระบุสมมุติฐาน 2 ข้อ: ความผิดพลาดค่าน้อยเกิดได้มากกว่าค่ามาก และแทบไม่มีความผิดพลาดค่ามาก ๆ เกิดขึ้นเลย"},
-{t:"E · Gaussian Distribution", q:"ในกราฟ Error distribution curve ค่า r มีความสัมพันธ์กับ σ (Standard deviation) อย่างไร", o:["r = σ","r = 0.6745·σ","r = 2σ","r = σ/2"], c:1, e:"เอกสารระบุความสัมพันธ์ r = 0.6745·σ ซึ่งกำหนดให้พื้นที่ใต้กราฟทั้งหมดเท่ากับหนึ่ง"},
-{t:"E · Gaussian Distribution", q:"พื้นที่ใต้กราฟทั้งหมดของเส้นโค้งการแจกแจงความน่าจะเป็น มีค่าเท่ากับเท่าใด", o:["0","0.5","1 (หนึ่ง)","100"], c:2, e:"เอกสารระบุว่าพื้นที่ใต้กราฟทั้งหมดมีค่าเท่ากับหนึ่ง (เทียบได้กับจำนวนข้อมูลทั้งหมด)"},
-{t:"E · Gaussian Distribution", q:"พื้นที่ใต้กราฟในขอบเขต −σ ถึง +σ มีค่าประมาณกี่เปอร์เซ็นต์", o:["50%","68% (0.6828)","95%","99%"], c:1, e:"ตารางในเอกสารระบุว่าขอบเขต −σ ถึง +σ มีพื้นที่ใต้กราฟ 0.6828 หรือประมาณ 68%"},
-{t:"E · Gaussian Distribution", q:"พื้นที่ใต้กราฟในขอบเขต −2σ ถึง +2σ มีค่าประมาณกี่เปอร์เซ็นต์", o:["50%","68%","95% (0.9546)","99.72%"], c:2, e:"ตารางในเอกสารระบุว่าขอบเขต −2σ ถึง +2σ มีพื้นที่ใต้กราฟ 0.9546 หรือประมาณ 95%"},
-{t:"E · Gaussian Distribution", q:"พื้นที่ใต้กราฟในขอบเขต −3σ ถึง +3σ มีค่าประมาณกี่เปอร์เซ็นต์", o:["68%","95%","99.72% (0.9972)","50%"], c:2, e:"ตารางในเอกสารระบุว่าขอบเขต −3σ ถึง +3σ มีพื้นที่ใต้กราฟ 0.9972 หรือประมาณ 99.72%"},
-{t:"E · Gaussian Distribution", q:"พื้นที่ใต้กราฟในขอบเขต −r ถึง +r มีค่าเท่ากับกี่เปอร์เซ็นต์", o:["25%","50%","68%","95%"], c:1, e:"ตารางในเอกสารระบุว่าขอบเขต −r ถึง +r มีพื้นที่ใต้กราฟ 0.5000 หรือ 50% พอดี"},
-{t:"E · Gaussian Distribution", q:"โรงงานผลิตตัวต้านทาน 100 โอห์ม จำนวน 10,000 ตัว มี σ ของความผิดพลาด = 0.2 โอห์ม ตามหลัก Normal law จำนวนตัวต้านทานที่มีค่าอยู่ในช่วง 99.8–100.2 โอห์ม (±σ) มีประมาณกี่ตัว", o:["5,000 ตัว","6,828 ตัว","9,546 ตัว","9,972 ตัว"], c:1, e:"ช่วง ±σ ครอบคลุมพื้นที่ 68.28% ของข้อมูล จาก 10,000 ตัว จึงมีประมาณ 6,828 ตัว ตามที่คำนวณไว้ในเอกสาร"},
-{t:"E · Gaussian Distribution", q:"จากโจทย์ข้อก่อนหน้า จำนวนตัวต้านทานที่มีค่าอยู่ในช่วง 99.4–100.6 โอห์ม (±3σ) มีประมาณกี่ตัว", o:["5,000 ตัว","6,828 ตัว","9,546 ตัว","9,972 ตัว"], c:3, e:"ช่วง ±3σ (99.4–100.6 โอห์ม) ครอบคลุมพื้นที่ 99.72% จาก 10,000 ตัว จึงมีประมาณ 9,972 ตัว ตามเอกสาร"},
-{t:"E · Gaussian Distribution", q:"จากโจทย์เดิม จำนวนตัวต้านทานที่มีความผิดพลาดอยู่ในช่วง ±0.2(0.6745) โอห์ม (คือ ±r) มีประมาณกี่ตัว", o:["5,000 ตัว","6,828 ตัว","9,546 ตัว","9,972 ตัว"], c:0, e:"ช่วง ±r ครอบคลุมพื้นที่ 50% พอดี จาก 10,000 ตัว จึงมีประมาณ 5,000 ตัว ตามที่ระบุไว้ในเอกสาร"},
-
-// ===== หมวด F: คุณลักษณะทางพลวัต (76-95) =====
-{t:"F · คุณลักษณะทางพลวัต", q:'"ความผิดพลาดพลวัต (Dynamic error)" เกิดจากสาเหตุใด', o:["เครื่องมือวัดไม่ได้รับการสอบเทียบ","เครื่องมือวัดเปลี่ยนแปลงค่าที่อ่านได้ไม่รวดเร็วเท่ากับการเปลี่ยนแปลงของปริมาณทางกายภาพที่วัด","ผู้ใช้งานอ่านค่าผิดพลาด","อุณหภูมิสิ่งแวดล้อมเปลี่ยนแปลง"], c:1, e:"เอกสารนิยาม Dynamic error ว่าเกิดจากเครื่องมือวัดเปลี่ยนแปลงค่าที่อ่านได้ (เอาต์พุต) ไม่รวดเร็วเท่ากับการเปลี่ยนแปลงของปริมาณทางกายภาพ (อินพุต)"},
-{t:"F · คุณลักษณะทางพลวัต", q:"รูปแบบการเปลี่ยนแปลงของขนาดปริมาณทางกายภาพที่กล่าวถึงมีกี่รูปแบบ อะไรบ้าง", o:["2 รูปแบบ: Step กับ Ramp","3 รูปแบบ: Step change, Linear change (ramp), Sinusoidal change","4 รูปแบบ: Step, Ramp, Sine, Exponential","1 รูปแบบ: Step change เท่านั้น"], c:1, e:"เอกสารระบุ 3 รูปแบบ: การเปลี่ยนแปลงแบบขั้นบันได (Step), แบบเชิงเส้น/ลาดเอียง (Ramp), และแบบไซนูซอยด์ (Sinusoidal)"},
-{t:"F · คุณลักษณะทางพลวัต", q:'"Speed of response" หมายถึงอะไร', o:["ความชันของกราฟเส้นตรง","ช่วงระยะเวลาที่เครื่องมือวัดใช้ในการเปลี่ยนแปลงจนถึงค่าที่ตรงกับค่าคาดหวัง เมื่อปริมาณทางกายภาพเปลี่ยนแปลง","ความละเอียดของสเกล","ความแม่นยำของค่าที่อ่านได้"], c:1, e:"เอกสารนิยาม Speed of response ว่าเป็นช่วงเวลาที่เครื่องมือวัดใช้ตั้งแต่เริ่มเปลี่ยนแปลงจนถึงค่าที่ตรงกับค่าคาดหวัง เมื่อปริมาณทางกายภาพเปลี่ยนแปลง"},
-{t:"F · คุณลักษณะทางพลวัต", q:'"Fidelity (ความชัด)" หมายถึงอะไร', o:["ความไวของเครื่องมือวัด","ระดับของ Speed of response โดยสมมุติว่าไม่มี dynamic error — อินพุตเปลี่ยนแปลงอย่างไร เอาต์พุตก็เปลี่ยนแปลงรูปแบบเดียวกันและมีค่าเท่ากันที่เวลาเดียวกัน","ความสามารถในการวัดค่าซ้ำได้","ค่าคงตัวเวลาของวงจร RC"], c:1, e:"เอกสารนิยาม Fidelity ว่าเป็นระดับของ Speed of response ที่ดีที่สุดคือเมื่ออินพุตเปลี่ยนแปลง เอาต์พุตก็เปลี่ยนแปลงในรูปแบบเดียวกันและมีค่าเท่ากันที่เวลาเดียวกัน (สมมุติไม่มี dynamic error)"},
-{t:"F · คุณลักษณะทางพลวัต", q:'"ความล้าหลัง (Lag)" หมายถึงอะไร', o:["ความคลาดเคลื่อนของค่าที่อ่านได้จากค่าคาดหวัง","การหน่วงเวลาหรือประวิงเวลาของผลตอบสนองจากเครื่องมือวัดต่อการเปลี่ยนแปลงของปริมาณทางกายภาพ","ความไม่แน่นอนของค่าที่อ่านได้","ค่าความต้านทานภายในเครื่องมือวัด"], c:1, e:"เอกสารนิยาม Lag ว่าเป็นการหน่วงเวลาหรือประวิงเวลาของผลตอบสนองจากเครื่องมือวัดต่อการเปลี่ยนแปลงของปริมาณทางกายภาพที่กำลังถูกวัด"},
-{t:"F · คุณลักษณะทางพลวัต", q:"อุปกรณ์วัดอันดับศูนย์ (Zero-order instruments) มีความสัมพันธ์ระหว่างอินพุตและเอาต์พุตแบบใด", o:["X₀ = KXᵢ (ไม่มีอนุพันธ์เวลา)","τ(dX₀/dt) + X₀ = KXᵢ","สมการเชิงอนุพันธ์อันดับสอง","X₀ = Xᵢ + τ"], c:0, e:"เอกสารให้สมการอุปกรณ์วัดอันดับศูนย์เป็น X₀ = KXᵢ ซึ่งไม่มีพจน์อนุพันธ์ตามเวลาเลย"},
-{t:"F · คุณลักษณะทางพลวัต", q:'เหตุใดอุปกรณ์วัดอันดับศูนย์จึงถือเป็น "เครื่องมือวัดในอุดมคติ"', o:["เพราะมีราคาถูกที่สุด","เพราะมีความชัดที่ดีที่สุด ไม่มีความล้าหลัง และไม่มีความผิดพลาดพลวัต","เพราะใช้งานง่ายที่สุด","เพราะไม่ต้องสอบเทียบ"], c:1, e:"เอกสารระบุว่าอุปกรณ์วัดอันดับศูนย์เป็นเครื่องมือวัดในอุดมคติเพราะมีความชัดดีที่สุด ไม่มีความล้าหลัง และไม่มีความผิดพลาดพลวัตเลย"},
-{t:"F · คุณลักษณะทางพลวัต", q:"ตัวอย่างของอุปกรณ์วัดอันดับศูนย์ตามเอกสารคือข้อใด", o:["ปรอทวัดไข้","ตัวต้านทานปรับค่าได้ที่ใช้วัดระยะทาง (Displacement potentiometer)","มาตรวัดแบบเข็มชี้ (VOM)","เทอร์โมคัปเปิล"], c:1, e:"เอกสารยกตัวอย่างอุปกรณ์วัดอันดับศูนย์ว่าคือตัวต้านทานปรับค่าได้ที่ใช้วัดระยะทาง/ระยะเลื่อน (Displacement potentiometer)"},
-{t:"F · คุณลักษณะทางพลวัต", q:"อุปกรณ์วัดอันดับหนึ่ง (First-order instruments) มีสมการเชิงอนุพันธ์แบบใด", o:["τ(dX₀/dt) + X₀ = KXᵢ","X₀ = KXᵢ","a₂(d²X₀/dt²) + a₁(dX₀/dt) + a₀X₀ = b₀Xᵢ","X₀ = Xᵢ²"], c:0, e:"สมการอุปกรณ์วัดอันดับหนึ่งในเอกสารคือ τ(dX₀/dt) + X₀ = KXᵢ ซึ่งมีอนุพันธ์อันดับหนึ่งของเอาต์พุต"},
-{t:"F · คุณลักษณะทางพลวัต", q:"ในสมการอุปกรณ์วัดอันดับหนึ่ง ตัวแปร τ คืออะไร", o:["ค่าความไวสถิต","ค่าคงตัวเวลา (Time constant)","อัตราส่วนการหน่วง","ความถี่ธรรมชาติ"], c:1, e:"เอกสารระบุว่า τ คือค่าคงตัวเวลา (Time constant) ของอุปกรณ์วัด มีหน่วยเป็นวินาที"},
-{t:"F · คุณลักษณะทางพลวัต", q:"ฟังก์ชันถ่ายโอนของอุปกรณ์วัดอันดับหนึ่งคือข้อใด", o:["X₀(S)/Xᵢ(S) = K/(τS+1)","X₀(S)/Xᵢ(S) = K/(S²+1)","X₀(S)/Xᵢ(S) = Kτ","X₀(S)/Xᵢ(S) = τ/S"], c:0, e:"เอกสารให้ Transfer function ของอุปกรณ์วัดอันดับหนึ่งเป็น X₀(S)/Xᵢ(S) = K/(τS+1)"},
-{t:"F · คุณลักษณะทางพลวัต", q:"อุปกรณ์วัดอันดับหนึ่งมีโพล (Pole) อยู่ที่ตำแหน่งใด", o:["S = τ","S = −1/τ","S = 0","S = 1/τ²"], c:1, e:"จากสมการ τS+1 = 0 จะได้ S = −1/τ ซึ่งเป็นตำแหน่งโพลของอุปกรณ์วัดอันดับหนึ่งตามเอกสาร"},
-{t:"F · คุณลักษณะทางพลวัต", q:"ตัวอย่างของอุปกรณ์วัดอันดับหนึ่งตามเอกสารคือข้อใด", o:["ตัวต้านทานปรับค่าได้","ปรอทวัดไข้ (Mercury-in-glass thermometer)","มาตรวัดแบบเข็มชี้ (VOM)","ซีเนอร์ไดโอด"], c:1, e:"เอกสารยกตัวอย่างอุปกรณ์วัดอันดับหนึ่งว่าคือ ปรอทวัดไข้ (Mercury-in-glass thermometer)"},
-{t:"F · คุณลักษณะทางพลวัต", q:"ค่าคงตัวเวลา τ ของอุปกรณ์วัดอันดับหนึ่งมีหน่วยเป็นอะไร", o:["โอห์ม","เฮิรตซ์","วินาที","เรเดียนต่อวินาที"], c:2, e:"เอกสารระบุว่าค่าคงตัวเวลา τ มีหน่วยเป็นวินาที"},
-{t:"F · คุณลักษณะทางพลวัต", q:"ในสมการอุปกรณ์วัดอันดับสอง ค่า ωₙ (Undamped natural frequency) คำนวณจากสูตรใด", o:["ωₙ = √(a₀/a₂)","ωₙ = a₁/a₀","ωₙ = a₂/a₀","ωₙ = √(a₂/a₀)"], c:0, e:"เอกสารให้สูตร 1/ωₙ² = a₂/a₀ ซึ่งจัดรูปได้ ωₙ = √(a₀/a₂)"},
-{t:"F · คุณลักษณะทางพลวัต", q:"ค่า ζ (Damping ratio, อัตราส่วนการหน่วง) ของอุปกรณ์วัดอันดับสองคำนวณจากสูตรใด", o:["ζ = ωₙ/a₁","ζ = (1/2)·(a₁/√(a₀·a₂))","ζ = a₀·a₂","ζ = a₁²"], c:1, e:"สูตร ζ ในเอกสารคือ ζ = (1/2)·(a₁/√(a₀·a₂)) ซึ่งได้จากการจัดรูปสมการ 2ζ/ωₙ = a₁/a₀"},
-{t:"F · คุณลักษณะทางพลวัต", q:"เมื่อ ζ > 1 กรณีของผลตอบสนองเรียกว่าอะไร", o:["หน่วงวิกฤติ (Critically damped)","หน่วงมากเกินไป/หน่วงเกิน (Overdamped)","หน่วงน้อยเกินไป (Underdamped)","ไม่มีการหน่วง"], c:1, e:"เมื่อ ζ > 1 โพลเป็นจำนวนจริงลบที่แตกต่างกัน 2 ค่า ทำให้เกิดกรณีหน่วงมากเกินไปหรือหน่วงเกิน (Overdamped case) ตามเอกสาร"},
-{t:"F · คุณลักษณะทางพลวัต", q:"เมื่อ ζ < 1 โพลของอุปกรณ์วัดอันดับสองเป็นจำนวนประเภทใด และกรณีนี้เรียกว่าอะไร", o:["จำนวนจริงลบที่แตกต่างกัน, Overdamped","จำนวนเชิงซ้อนคู่สังยุค (Conjugate pair), Underdamped","จำนวนจริงลบที่ซ้ำกัน, Critically damped","จำนวนจินตภาพล้วน, ไม่มีชื่อเรียก"], c:1, e:"เมื่อ ζ < 1 โพลเป็นจำนวนเชิงซ้อนคู่สังยุค (Conjugate pair) ทำให้เกิดกรณีหน่วงต่ำหรือหน่วงน้อยเกินไป (Underdamped) ซึ่งมี Overshoot เกิดขึ้น"},
-{t:"F · คุณลักษณะทางพลวัต", q:"ตัวอย่างของอุปกรณ์วัดอันดับสองตามเอกสารคือข้อใด", o:["ปรอทวัดไข้","ตัวต้านทานปรับค่าได้","มาตรวัดแบบแอนะลอกที่ใช้การหมุนของเข็มชี้และสเกล เช่น VOM","เซลล์ Weston"], c:2, e:"เอกสารยกตัวอย่างอุปกรณ์วัดอันดับสองว่าคือมาตรวัดแบบแอนะลอกที่ใช้การหมุนของเข็มชี้และสเกล เช่น VOM (พิจารณาเป็นวงจร RLC ก็ได้)"},
-{t:"F · คุณลักษณะทางพลวัต", q:'"Rise time" ตามนิยามในเอกสารคือช่วงเวลาใด', o:["ตั้งแต่เริ่มเปลี่ยนแปลงจากศูนย์จนถึงการเกิด Overshoot ครั้งแรก","ตั้งแต่ 10% จนถึง 90% ของค่าในสถานะอยู่ตัว (หรือ 0% ถึง 100% ครั้งแรก)","ตั้งแต่เริ่มเปลี่ยนแปลงจนถึงค่าคงที่ตลอดไปภายใน 95–98%","ตั้งแต่ 50% ถึง 100% ของค่าสูงสุด"], c:1, e:"เอกสารนิยาม Rise time ว่าเป็นช่วงเวลาที่ผลตอบสนองมีค่าตั้งแต่ 10% จนถึง 90% ของค่าในสถานะอยู่ตัว (หรือ 0% ถึง 100% ครั้งแรก) — ส่วนตัวเลือก ก. คือ Peak time และ ค. คือ Settling time"},
-
-// ===== หมวด G: ขีดจำกัดความผิดพลาด + มาตรฐาน (96-100) =====
-{t:"G · ขีดจำกัดความผิดพลาด/มาตรฐาน", q:'"ขีดจำกัดความผิดพลาด (Limiting error)" ผู้ผลิตมักระบุเป็นหน่วยใด', o:["โวลต์","เปอร์เซ็นต์ของค่าที่อ่านได้เต็มสเกล (% of full-scale reading)","โอห์ม","องศาเซลเซียส"], c:1, e:"เอกสารระบุว่าผู้ผลิตจะระบุขีดจำกัดความผิดพลาดเป็นเปอร์เซ็นต์ของค่าที่อ่านได้เต็มสเกล (% of a full-scale reading)"},
-{t:"G · ขีดจำกัดความผิดพลาด/มาตรฐาน", q:"มาตรวัดแรงดันพิสัย 600V มีความผิดพลาด ±2% ของค่าเต็มสเกล เมื่อนำไปวัดที่ 250V เปอร์เซ็นต์ความผิดพลาดที่ 250V เท่ากับเท่าใด (โดยประมาณ)", o:["±2%","±4.8%","±12%","±0.5%"], c:1, e:"ค่าผิดพลาดสูงสุดคงที่ = 0.02×600 = 12V เสมอ เมื่อวัดที่ 250V จะได้ %error = 12/250×100 ≈ 4.8% ตามที่คำนวณไว้ในเอกสาร"},
-{t:"G · ขีดจำกัดความผิดพลาด/มาตรฐาน", q:"ขีดจำกัดความผิดพลาดของกำลังงาน (P = V·I) สัมพันธ์กับขีดจำกัดความผิดพลาดของแรงดันและกระแสอย่างไร", o:["ΔP/P = ΔV/V × ΔI/I","ΔP/P = ΔV/V + ΔI/I","ΔP/P = ΔV/V − ΔI/I","ΔP/P = (ΔV/V)²+(ΔI/I)²"], c:1, e:"จากการหาอนุพันธ์ผลคูณ d(P)=V·dI+I·dV แล้วหารด้วย P=VI จะได้ ΔP/P = ΔV/V + ΔI/I ตามที่พิสูจน์ไว้ในเอกสาร"},
-{t:"G · ขีดจำกัดความผิดพลาด/มาตรฐาน", q:"มาตรฐานของการวัด แบ่งออกเป็น 4 ระดับ เรียงจากแม่นยำที่สุดไปถึงใช้งานทั่วไป คือข้อใด", o:["มาตรฐานทุติยภูมิ → ปฐมภูมิ → ระหว่างประเทศ → การทำงาน","มาตรฐานระหว่างประเทศ → ปฐมภูมิ → ทุติยภูมิ → การทำงาน","มาตรฐานการทำงาน → ทุติยภูมิ → ปฐมภูมิ → ระหว่างประเทศ","มาตรฐานปฐมภูมิ → ระหว่างประเทศ → การทำงาน → ทุติยภูมิ"], c:1, e:"ลำดับตามเอกสาร: มาตรฐานระหว่างประเทศ (แม่นยำสูงสุด) → มาตรฐานปฐมภูมิ → มาตรฐานทุติยภูมิ → มาตรฐานการทำงาน (ใช้งานทั่วไป)"},
-{t:"G · ขีดจำกัดความผิดพลาด/มาตรฐาน", q:"หน่วยงานที่ทำหน้าที่เก็บรักษามาตรฐานปฐมภูมิของประเทศไทยคือหน่วยงานใด", o:["การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย","สถาบันมาตรวิทยาแห่งชาติ","สำนักงานมาตรฐานผลิตภัณฑ์อุตสาหกรรม","มหาวิทยาลัยเทคโนโลยีสุรนารี"], c:1, e:"เอกสารระบุตรง ๆ ว่า \"ประเทศไทยมีสถาบันมาตรวิทยาแห่งชาติทำหน้าที่เก็บรักษามาตรฐานการวัด\""},
+{q:"ข้อใด ตรงกับ Gaussian law (normal law) ของความผิดพลาดสุ่ม ?",
+ o:["ความผิดพลาดสุ่มมีค่าน้อย","ความผิดพลาดสุ่มมีค่าเฉลี่ยที่ไม่เท่ากับศูนย์","ความผิดพลาดสุ่มบวกมีโอกาสเกิดขึ้นได้มากกว่าความผิดพลาดสุ่มลบ","ค่าที่อ่านได้ทุกตัวเลขมีความผิดพลาดเชิงระบบและความผิดพลาดสุ่ม"], a:0},
+{q:"การคำนวณกำลังงานมีขีดจำกัดความผิดพลาด (limiting error) เท่ากับข้อใด ?",
+ o:["ผลลบระหว่างขีดจำกัดความผิดพลาดของแรงดันและขีดจำกัดความผิดพลาดของกระแสไฟฟ้า","ผลคูณระหว่างขีดจำกัดความผิดพลาดของแรงดันและขีดจำกัดความผิดพลาดของกระแสไฟฟ้า","ผลบวกระหว่างขีดจำกัดความผิดพลาดของแรงดันและขีดจำกัดความผิดพลาดของกระแสไฟฟ้า","ผลหารระหว่างขีดจำกัดความผิดพลาดของแรงดันและขีดจำกัดความผิดพลาดของกระแสไฟฟ้า"], a:2},
+{q:"ข้อใดคือความหมายของ \"เครื่องมือวัด\" ?",
+ o:["อุปกรณ์ที่ใช้กำหนดหน่วยของปริมาณทางกายภาพ","อุปกรณ์ที่ใช้หาค่าปริมาณทางกายภาพ","อุปกรณ์ที่ใช้ระบุมาตรฐานของปริมาณทางกายภาพ","อุปกรณ์ที่ใช้สำหรับวิเคราะห์ปริมาณทางกายภาพ"], a:1},
+{q:"สมการเส้นตรงที่ดีที่สุด (linear graph fitting) ของเครื่องมือวัดหรืออุปกรณ์วัด ไม่มีประโยชน์ในข้อใด ?",
+ o:["ใช้คำนวณหาความไวของเครื่องมือวัดหรืออุปกรณ์วัดตลอดพิสัยหรือย่านการวัด","ใช้แทนความสัมพันธ์ระหว่างค่าที่อ่านได้และขนาดของปริมาณทางกายภาพที่ถูกวัด","ใช้ทำนายค่าที่อ่านได้หลังจากการกำหนดขนาดของปริมาณทางกายภาพ","ใช้คำนวณความน่าจะเป็นของค่าที่อ่านได้จากเครื่องมือวัดหรืออุปกรณ์วัด"], a:2},
+{q:"ข้อใด ? ที่ใช้ในการนิยามหรือกำหนดความหมายหน่วยของปริมาณทางไฟฟ้า (หน่วยที่ใช้ในการวัด)",
+ o:["ค่าแท้จริงของปริมาณทางไฟฟ้า","อุปกรณ์วัดหรือเครื่องมือวัด","มาตรฐานของคุณลักษณะสถิตและคุณลักษณะพลวัต","มาตรฐานของวัสดุ"], a:0},
+{q:"จากรูปผลตอบสนองต่อไปนี้ (กราฟ step response ที่มีค่าพุ่งเกินเล็กน้อยแล้วเข้าสู่สถานะคงตัวที่ 1) ข้อใดไม่ถูกต้อง",
+ o:["rise time ≈ 0.25 s (10%-90%)","Overshoot ≈ 10%","peak time ≈ 0.7 s","Settling time ≈ 1.5 s"], a:1},
+{q:"ข้อใดไม่ใช่ความผิดพลาดเชิงระบบ (systematic error)",
+ o:["Random error","Instrumental error","Observational error","Environmental error"], a:0},
+{q:"ข้อใดคือเครื่องมือวัดประเภท first-order",
+ o:["Displacement potentiometer","Mercury-in-glass thermometer","VOM","มีข้อถูกมากกว่า 1 ข้อ"], a:3},
+{q:"กราฟเส้นตรงที่ดีที่สุด (linear graph fitting) มีคุณสมบัติที่ตรงกับข้อใด ?",
+ o:["กราฟที่อยู่ห่างจากจุดทุกจุดด้วยผลบวกกำลังสองของระยะห่างที่น้อยที่สุด","กราฟที่อยู่ห่างจากจุดทุกจุดที่แทนคู่ลำดับด้วยระยะห่างที่น้อยที่สุด","กราฟที่เชื่อมต่อจุดทุกจุดที่แทนคู่ลำดับที่ใช้หาสมการเส้นตรงที่ดีที่สุด","กราฟที่อยู่ห่างจากจุดทุกจุดที่แทนคู่ลำดับด้วยระยะห่างที่เท่ากัน"], a:3},
+{q:"ข้อใดกล่าวถูกต้อง",
+ o:["ความแม่น (accuracy) คือ ระดับของความใกล้เคียงกันระหว่างค่าแท้จริงและค่าคาดหวัง","ความไว (sensitivity) คือ เส้นกราฟระหว่างค่าที่อ่านได้จากเครื่องมือวัดและขนาดของปริมาณทางกายภาพที่กำลังถูกวัด","ความเที่ยง (precision) คือ สภาพซ้ำกันได้ของค่าที่อ่านได้จากเครื่องมือวัด เมื่อนำเครื่องมือวัดไปวัดปริมาณทางกายภาพชนิดเดียวกันที่มีปริมาณต่างกันเล็กน้อย","ความแยกชัด (resolution) คือ การเปลี่ยนแปลงขนาดของปริมาณทางกายภาพที่กำลังถูกวัดน้อยที่สุดที่ทำให้เครื่องมือวัดเริ่มเปลี่ยนแปลงตัวเลขค่าที่อ่านได้"], a:3},
+{q:"มาตรฐานทุติยภูมิ (secondary standard) มีจุดเด่นที่ตรงกับข้อใด ?",
+ o:["เป็นมาตรฐานที่ประจำอยู่กับที่และไม่สามารถเคลื่อนย้ายได้","มีความถูกต้องหรือความแม่นเทียบเท่ากับมาตรฐานปฐมภูมิ","เป็นมาตรฐานที่ไม่จำเป็นต้องได้รับการสอบเทียบมาตรฐาน","ภาคอุตสาหกรรมสามารถเข้าถึงและเก็บรักษาไว้ได้"], a:3},
+{q:"เครื่องมือวัดหรืออุปกรณ์วัดมีข้อมูลจำเพาะข้อใด ? ที่มีประโยชน์ถึงผู้ใช้งานมากที่สุด",
+ o:["การเบี่ยงเบนมาตรฐานของความผิดพลาด (standard deviation of error)","ค่าเฉลี่ยเลขคณิตของความผิดพลาด (arithmetic mean of error)","ขีดจำกัดความผิดพลาด (limiting error)","การเบี่ยงเบนเฉลี่ยของความผิดพลาด (average deviation of error)"], a:3},
+{q:"ปัจจัยในข้อใด ? ที่ทำให้เส้นโค้งการแจกแจงความผิดพลาด (error distribution curve) มีประโยชน์และมีความหมาย",
+ o:["อุปกรณ์วัดหรือเครื่องมือวัดที่มีความเที่ยงสูงมาก","ความผิดพลาดสุ่มที่มีสาเหตุของการเกิดอย่างชัดเจน","อุปกรณ์วัดหรือเครื่องมือวัดที่ได้รับการสอบเทียบมาตรฐาน","จำนวนมากมายของค่าที่อ่านได้ที่เกิดจากการวัดซ้ำกันมากครั้ง"], a:3},
+{q:"เครื่องมือวัดประเภท Second-order ที่มีค่า damping ratio (ζ) > 1 จะให้ผลตอบสนองทางพลวัตอย่างไร เมื่ออินพุตในการวัดมีการเปลี่ยนแปลงแบบขั้นบันได (step)",
+ o:["ไม่มีค่าพุ่งเกินและค่าพุ่งต่ำ และใช้เวลาในการลู่เข้าสู่สถานะคงตัวเร็ว","ไม่มีค่าพุ่งเกินและค่าพุ่งต่ำ และใช้เวลาในการลู่เข้าสู่สถานะคงตัวช้า","มีค่าพุ่งเกินและค่าพุ่งต่ำ และใช้เวลาในการลู่เข้าสู่สถานะคงตัวเร็ว","มีค่าพุ่งเกินและค่าพุ่งต่ำ และใช้เวลาในการลู่เข้าสู่สถานะคงตัวช้า"], a:1},
+{q:"ข้อใดกล่าวไม่ถูกต้องเกี่ยวกับการสอบเทียบเครื่องมือวัด (calibration)",
+ o:["การสอบเทียบเครื่องมือวัดจะต้องดำเนินการวัดซ้ำกันหลาย ๆ ครั้ง ตลอดช่วงพิสัยของการใช้งาน","มีข้อถูกมากกว่า 1 ข้อ","เครื่องมือวัดที่ใช้ในการสอบเทียบต้องมีคุณภาพสูงและถูกใช้งานประจำ","เครื่องมือวัดที่ใช้ในการสอบเทียบต้องมีมาตรฐานการรับรอง"], a:3},
+{q:"มาตรฐานการทำงานมีคุณสมบัติในข้อใด ? ที่ดีกว่าอุปกรณ์วัดที่ใช้งานประจำ",
+ o:["มีความถูกต้องหรือความแม่นสูงกว่า","มีความผิดพลาดเชิงระบบที่แน่นอนและคงที่มากกว่า","มีความเที่ยงและความไวสูงกว่า","มีอายุการใช้งานที่ยาวนานกว่า"], a:1},
+{q:"เส้นโค้งการแจกแจงความผิดพลาด (error distribution curve) มีคุณสมบัติที่ตรงกับข้อใด ?",
+ o:["เส้นโค้งการแจกแจงความผิดพลาดมีพื้นที่ใต้กราฟคือความหนาแน่นของความน่าจะเป็น","เส้นโค้งการแจกแจงความผิดพลาดมีพื้นที่ใต้กราฟคือการเบี่ยงเบนมาตรฐาน","เส้นโค้งการแจกแจงความผิดพลาดมีพื้นที่ใต้กราฟคือความน่าจะเป็น","เส้นโค้งการแจกแจงความผิดพลาดมีพื้นที่ใต้กราฟคือความผิดพลาด"], a:3},
+{q:"ถ้าผู้ผลิตและผู้ใช้งานต้องการตรวจสอบและประเมินคุณภาพของอุปกรณ์วัดหรือเครื่องมือวัด ผู้ผลิตและผู้ใช้งานจะต้องดำเนินการอย่างไร ?",
+ o:["ปรับแก้อุปกรณ์วัดหรือเครื่องมือวัดจนกว่าค่าที่อ่านได้มีความถูกต้อง","วิเคราะห์ทางสถิติของค่าที่อ่านได้ที่เกิดจากการวัดปริมาณทางกายภาพซ้ำกันหลายครั้ง","ค้นหาสาเหตุที่ทำให้อุปกรณ์วัดหรือเครื่องมือวัดแสดงค่าที่อ่านได้ที่มีความผิดพลาด","ศึกษาคู่มือการใช้งานของอุปกรณ์วัดหรือเครื่องมือวัด"], a:1},
+{q:"ข้อใดกล่าวไม่ถูกต้องเกี่ยวกับคุณลักษณะพลวัต (dynamic characteristics) ของเครื่องมือวัด",
+ o:["ความล้าหลัง คือ การประวิงเวลาของผลตอบสนองค่าที่อ่านได้จากเครื่องมือวัดเมื่อขนาดของปริมาณทางกายภาพที่กำลังถูกวัดมีการเปลี่ยนแปลง","ความผิดพลาดทางพลวัตเกิดจากเครื่องมือวัดเปลี่ยนแปลงค่าที่อ่านได้ ไม่รวดเร็วเท่ากับการเปลี่ยนแปลงของปริมาณทางกายภาพที่กำลังถูกวัด","ความชัด คือ ระดับของความรวดเร็วในการตอบสนองของค่าที่อ่านได้จากเครื่องมือวัด","คุณลักษณะพลวัตเกิดขึ้นเมื่อนำเครื่องมือวัดไปวัดค่าปริมาณทางกายภาพที่มีค่าคงที่"], a:3},
+{q:"ข้อใดคือความหมายของ \"การวัด\"",
+ o:["กระบวนการที่ใช้ระบุมาตรฐานของปริมาณทางกายภาพ","กระบวนการที่ใช้สำหรับวิเคราะห์ปริมาณทางกายภาพ","กระบวนการที่ใช้หาค่าปริมาณทางกายภาพ","กระบวนการที่ใช้กำหนดหน่วยของปริมาณทางกายภาพ"], a:2},
+{q:"เมื่อพิจารณาขีดจำกัดความผิดพลาด (limiting error) ถ้าค่าที่อ่านได้น้อยกว่าตัวเลขมากที่สุดของพิสัยหรือย่านการวัด ค่าที่อ่านได้จะมีเปอร์เซ็นต์ความผิดพลาดอย่างไร ?",
+ o:["ค่าที่อ่านได้อาจจะมีเปอร์เซ็นต์ความผิดพลาดลดลง","ค่าที่อ่านได้อาจจะมีเปอร์เซ็นต์ความผิดพลาดที่ไม่แน่นอน","ค่าที่อ่านได้อาจจะมีเปอร์เซ็นต์ความผิดพลาดที่ไม่เปลี่ยนแปลง","ค่าที่อ่านได้อาจจะมีเปอร์เซ็นต์ความผิดพลาดเพิ่มขึ้น"], a:0},
+{q:"ถ้าผู้ใช้งานต้องการตรวจสอบความเที่ยงของดิจิตอลโวลต์มิเตอร์ (digital voltmeter) ผู้ใช้งานจะต้องวิเคราะห์ทางสถิติ (statistical analysis) ที่ตรงกับค่าใด ?",
+ o:["การเบี่ยงเบนเฉลี่ย (average deviation) ของค่าที่อ่านได้","การเบี่ยงเบนจากค่าเฉลี่ย (deviation from the mean) ของค่าที่อ่านได้","ค่าเฉลี่ยเลขคณิต (arithmetic mean) ของค่าที่อ่านได้","การเบี่ยงเบนมาตรฐาน (standard deviation) ของค่าที่อ่านได้"], a:1},
+{q:"ข้อใดไม่ใช่คุณลักษณะสถิต (static characteristics) ของเครื่องมือวัด",
+ o:["ความผิดพลาด (error)","ความรวดเร็วในการตอบสนอง (speed of response)","ความเที่ยง (precision)","ความแม่น (accuracy)"], a:1},
 ];
 
-const TAG = ["ก","ข","ค","ง"];
-let cur = 0, score = 0, answered = new Array(QUESTIONS.length).fill(null);
-let order = [];
+const LETTERS = ["ก","ข","ค","ง"];
 
-function shuffleOrder(){
-  order = QUESTIONS.map((_, i) => i);
-  for(let i = order.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i + 1));
-    [order[i], order[j]] = [order[j], order[i]];
+let order = QUESTIONS.map((_,i)=>i);   // order[displayIndex] = question index
+let current = 0;
+let answers = {};   // displayIndex -> {choice, correct}
+let finished = false;
+
+const navGrid = document.getElementById('navGrid');
+const quizArea = document.getElementById('quizArea');
+const progressLabel = document.getElementById('progressLabel');
+const scoreReadout = document.getElementById('scoreReadout');
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function startAttempt(doShuffle){
+  order = doShuffle ? shuffle(QUESTIONS.map((_,i)=>i)) : QUESTIONS.map((_,i)=>i);
+  current = 0;
+  answers = {};
+  finished = false;
+  render();
+}
+
+function selectAnswer(displayIndex, choice){
+  if(finished) return;
+  const qIdx = order[displayIndex];
+  const q = QUESTIONS[qIdx];
+  answers[displayIndex] = {choice, correct: choice === q.a};
+  render();
+}
+
+function goTo(displayIndex){
+  current = displayIndex;
+  render();
+}
+
+function finishAttempt(){
+  finished = true;
+  render();
+  quizArea.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function renderNavGrid(){
+  navGrid.innerHTML = '';
+  order.forEach((qIdx, i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'nav-btn';
+    btn.textContent = i+1;
+    if(i === current) btn.classList.add('current');
+    const ans = answers[i];
+    if(finished && ans){
+      btn.classList.add(ans.correct ? 'answered-correct' : 'answered-wrong');
+    } else if(finished && !ans){
+      btn.classList.add('skipped');
+    } else if(!finished && ans){
+      btn.classList.add('skipped'); // amber = answered but not yet graded (still attempt mode) -> use as "answered" marker
+      btn.style.color = 'var(--phosphor)';
+      btn.style.borderColor = 'var(--phosphor-dim)';
+      btn.style.background = 'rgba(78,222,152,0.1)';
+    }
+    btn.addEventListener('click', ()=>goTo(i));
+    navGrid.appendChild(btn);
+  });
+  const answeredCount = Object.keys(answers).length;
+  progressLabel.textContent = `${answeredCount} / ${QUESTIONS.length} answered`;
+}
+
+function renderScore(){
+  const answeredCount = Object.keys(answers).length;
+  const correctCount = Object.values(answers).filter(a=>a.correct).length;
+  if(finished){
+    scoreReadout.textContent = `${correctCount}/${QUESTIONS.length}`;
+  } else {
+    scoreReadout.textContent = `${answeredCount}/${QUESTIONS.length}`;
   }
 }
-shuffleOrder();
 
-const qnum = document.getElementById('qnum');
-const qtext = document.getElementById('qtext');
-const optionsEl = document.getElementById('options');
-const feedback = document.getElementById('feedback');
-const nextBtn = document.getElementById('nextBtn');
-const skipBtn = document.getElementById('skipBtn');
-const railFill = document.getElementById('railFill');
-const topicTag = document.getElementById('topicTag');
-const roScore = document.getElementById('roScore');
-const roIndex = document.getElementById('roIndex');
-const roPct = document.getElementById('roPct');
-const qpanel = document.getElementById('qpanel');
-const result = document.getElementById('result');
+function renderQuestion(){
+  const qIdx = order[current];
+  const q = QUESTIONS[qIdx];
+  const ans = answers[current];
+  const showResult = finished || !!ans;
 
-function pad(n){ return String(n).padStart(3,'0'); }
+  let optsHtml = '';
+  q.o.forEach((opt, i)=>{
+    let cls = 'opt';
+    if(!finished){
+      if(ans && ans.choice === i) cls += ' selected';
+      if(ans) cls += ' disabled';
+    } else {
+      cls += ' disabled';
+      if(i === q.a) cls += ' correct';
+      else if(ans && ans.choice === i) cls += ' wrong';
+    }
+    optsHtml += `<div class="${cls}" onclick="selectAnswer(${current},${i})">
+      <span class="tag">${LETTERS[i]}</span><span>${opt}</span>
+    </div>`;
+  });
 
-function updateReadout(){
-  const answeredCount = answered.filter(a=>a!==null && a!=='skip').length;
-  const pct = answeredCount ? Math.round((score/answeredCount)*100) : 0;
-  roScore.textContent = score;
-  roIndex.textContent = pad(cur+1) + "/" + QUESTIONS.length;
-  roPct.textContent = pct + "%";
+  let feedbackHtml = '';
+  if(ans && !finished){
+    feedbackHtml = ans.correct
+      ? `<div class="feedback ok">✓ ถูกต้อง</div>`
+      : `<div class="feedback bad">✗ ยังไม่ถูก — คำตอบที่ถูกคือข้อ ${LETTERS[q.a]}</div>`;
+  }
+
+  quizArea.innerHTML = `
+    <div class="screen">
+      <div class="qmeta"><span>Q${current+1} / ${QUESTIONS.length}</span><span>${ans ? (finished ? (ans.correct?'CORRECT':'INCORRECT') : 'ANSWERED') : 'NOT ANSWERED'}</span></div>
+      <div class="qtext">${q.q}</div>
+      <div class="options">${optsHtml}</div>
+      ${feedbackHtml}
+      <div class="footer-nav">
+        <button class="btn btn-ghost" id="prevBtn" ${current===0?'disabled':''}>← ข้อก่อนหน้า</button>
+        <button class="btn btn-ghost" id="skipBtn">ข้ามข้อนี้ →</button>
+        <button class="btn btn-solid" id="nextBtn" ${current===order.length-1?'disabled':''}>ข้อถัดไป →</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('prevBtn').addEventListener('click', ()=>{ if(current>0) goTo(current-1); });
+  document.getElementById('nextBtn').addEventListener('click', ()=>{ if(current<order.length-1) goTo(current+1); });
+  document.getElementById('skipBtn').addEventListener('click', ()=>{ if(current<order.length-1) goTo(current+1); else quizArea.scrollIntoView(); });
+}
+
+function renderResultScreen(){
+  const correctCount = Object.values(answers).filter(a=>a.correct).length;
+  const total = QUESTIONS.length;
+  const pct = Math.round((correctCount/total)*100);
+  let reviewHtml = '';
+  order.forEach((qIdx, i)=>{
+    const q = QUESTIONS[qIdx];
+    const ans = answers[i];
+    const wrong = !ans || !ans.correct;
+    reviewHtml += `<div class="review-item ${wrong?'wrong':''}">
+      <div class="q">${i+1}. ${q.q}</div>
+      <div class="a ${wrong?'bad':'ok'}">
+        ${ans ? `คุณตอบ: ${LETTERS[ans.choice]}. ${q.o[ans.choice]}` : 'ไม่ได้ตอบ'}
+        ${wrong ? ` · เฉลย: ${LETTERS[q.a]}. ${q.o[q.a]}` : ''}
+      </div>
+    </div>`;
+  });
+
+  quizArea.innerHTML = `
+    <div class="screen">
+      <div class="result">
+        <div class="big">${correctCount} / ${total}</div>
+        <div class="sub">คิดเป็น ${pct}% · กด "เริ่มทำใหม่" หรือ "สุ่มลำดับข้อใหม่" ด้านบนเพื่อลองอีกครั้ง</div>
+      </div>
+      <div class="review-list">${reviewHtml}</div>
+    </div>
+  `;
 }
 
 function render(){
-  const item = QUESTIONS[order[cur]];
-  qnum.textContent = "ข้อ " + (cur+1) + " / " + QUESTIONS.length;
-  qtext.textContent = item.q;
-  topicTag.textContent = "หมวด " + item.t;
-  railFill.style.width = (((cur)/QUESTIONS.length)*100) + "%";
-
-  optionsEl.innerHTML = "";
-  feedback.className = "feedback";
-  feedback.innerHTML = "";
-  nextBtn.disabled = true;
-  nextBtn.textContent = (cur === QUESTIONS.length-1) ? "ดูผลสรุป →" : "ข้อถัดไป →";
-  skipBtn.disabled = false;
-  skipBtn.style.display = "inline-block";
-
-  const prevAns = answered[order[cur]];
-
-  item.o.forEach((optText, idx)=>{
-    const div = document.createElement('div');
-    div.className = "opt";
-    div.innerHTML = '<span class="tag">' + TAG[idx] + '</span><span>' + optText + '</span>';
-    div.addEventListener('click', ()=> selectOption(idx));
-    if(prevAns !== null){
-      div.classList.add('locked');
-      if(idx === item.c) div.classList.add('correct');
-      else if(idx === prevAns) div.classList.add('wrong');
-      else div.classList.add('dim');
-    }
-    optionsEl.appendChild(div);
-  });
-
-  if(prevAns === 'skip'){
-    showSkipFeedback();
-    nextBtn.disabled = false;
-    skipBtn.disabled = true;
-  } else if(prevAns !== null){
-    showFeedback(prevAns === item.c);
-    nextBtn.disabled = false;
-    skipBtn.disabled = true;
-  }
-
-  updateReadout();
-}
-
-function selectOption(idx){
-  const item = QUESTIONS[order[cur]];
-  if(answered[order[cur]] !== null) return;
-  answered[order[cur]] = idx;
-  if(idx === item.c) score++;
-
-  [...optionsEl.children].forEach((div, i)=>{
-    div.classList.add('locked');
-    if(i === item.c) div.classList.add('correct');
-    else if(i === idx) div.classList.add('wrong');
-    else div.classList.add('dim');
-  });
-
-  showFeedback(idx === item.c);
-  nextBtn.disabled = false;
-  skipBtn.disabled = true;
-  updateReadout();
-}
-
-function showFeedback(ok){
-  const item = QUESTIONS[order[cur]];
-  feedback.className = "feedback show " + (ok ? "ok" : "no");
-  feedback.innerHTML = "<b>" + (ok ? "✓ ตอบถูก — เหตุผล" : "✕ ยังไม่ถูก — เหตุผลที่คำตอบ " + TAG[item.c] + " ถูกต้อง") + "</b>" + item.e;
-}
-
-function showSkipFeedback(){
-  const item = QUESTIONS[order[cur]];
-  feedback.className = "feedback show skip";
-  feedback.innerHTML = "<b>» ข้ามข้อนี้ — คำตอบที่ถูกคือ " + TAG[item.c] + "</b>" + item.e;
-}
-
-skipBtn.addEventListener('click', ()=>{
-  if(answered[order[cur]] !== null) return;
-  answered[order[cur]] = 'skip';
-  const item = QUESTIONS[order[cur]];
-  [...optionsEl.children].forEach((div, i)=>{
-    div.classList.add('locked');
-    if(i === item.c) div.classList.add('correct');
-    else div.classList.add('dim');
-  });
-  showSkipFeedback();
-  nextBtn.disabled = false;
-  skipBtn.disabled = true;
-  updateReadout();
-});
-
-nextBtn.addEventListener('click', ()=>{
-  if(cur < QUESTIONS.length-1){
-    cur++;
-    render();
+  renderNavGrid();
+  renderScore();
+  if(finished){
+    renderResultScreen();
   } else {
-    showResult();
+    renderQuestion();
   }
-});
-
-function showResult(){
-  qpanel.style.display = "none";
-  document.querySelector('.controls').style.display = "none";
-  document.querySelector('.topic-tag').style.display = "none";
-  document.querySelector('.rail').style.display = "none";
-  result.classList.add('show');
-  railFill.style.width = "100%";
-
-  const pct = Math.round((score/QUESTIONS.length)*100);
-  const skippedCount = answered.filter(a=>a==='skip').length;
-  document.getElementById('finalPct').textContent = pct + "%";
-  let msg = "";
-  if(pct>=90) msg = "แม่นระดับมาตรฐานปฐมภูมิ — เยี่ยมมาก!";
-  else if(pct>=75) msg = "แม่นยำดี ใกล้เคียงมาตรฐานทุติยภูมิ";
-  else if(pct>=50) msg = "พอใช้ได้ ลองทบทวนจุดที่พลาดอีกรอบ";
-  else msg = "ควรกลับไปอ่านเนื้อหาเพิ่มก่อนสอบจริง";
-  document.getElementById('finalMsg').textContent = msg + "  (" + score + "/" + QUESTIONS.length + " ข้อ" + (skippedCount? " · ข้ามไป " + skippedCount + " ข้อ":"") + ")";
-
-  const topics = {};
-  QUESTIONS.forEach((item, i)=>{
-    const key = item.t.split(" · ")[0];
-    if(!topics[key]) topics[key] = {correct:0, total:0};
-    topics[key].total++;
-    if(answered[i] === item.c) topics[key].correct++;
-  });
-  const bd = document.getElementById('breakdown');
-  bd.innerHTML = "";
-  Object.keys(topics).sort().forEach(k=>{
-    const row = document.createElement('div');
-    row.innerHTML = "<span>หมวด " + k + "</span><span>" + topics[k].correct + " / " + topics[k].total + "</span>";
-    bd.appendChild(row);
-  });
 }
 
-document.getElementById('restartBtn').addEventListener('click', ()=>{
-  cur = 0; score = 0; answered = new Array(QUESTIONS.length).fill(null);
-  shuffleOrder();
-  qpanel.style.display = "flex";
-  document.querySelector('.controls').style.display = "flex";
-  document.querySelector('.topic-tag').style.display = "block";
-  document.querySelector('.rail').style.display = "block";
-  result.classList.remove('show');
-  render();
-});
+document.getElementById('shuffleBtn').addEventListener('click', ()=>startAttempt(true));
+document.getElementById('resetBtn').addEventListener('click', ()=>startAttempt(false));
+document.getElementById('finishBtn').addEventListener('click', finishAttempt);
 
-render();
+startAttempt(false);
 </script>
 </body>
 </html>
